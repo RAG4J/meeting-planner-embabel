@@ -24,7 +24,6 @@ public class MeetingRequest {
     
     private Integer durationMinutes = 30; // Default 30 minutes
     
-    private String type;
     
     private String location;
     
@@ -63,8 +62,6 @@ public class MeetingRequest {
     public Integer getDurationMinutes() { return durationMinutes; }
     public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
     
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
     
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
@@ -88,7 +85,6 @@ public class MeetingRequest {
                 ", date=" + date +
                 ", startTime=" + startTime +
                 ", durationMinutes=" + durationMinutes +
-                ", type='" + type + '\'' +
                 '}';
     }
 }

@@ -22,7 +22,6 @@ public class Meeting {
     
     private Integer durationMinutes;
     
-    private String type;
     
     private String location;
     
@@ -65,8 +64,6 @@ public class Meeting {
     public Integer getDurationMinutes() { return durationMinutes; }
     public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
     
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
     
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }

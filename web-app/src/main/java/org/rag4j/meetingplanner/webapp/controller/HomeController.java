@@ -1,17 +1,22 @@
 package org.rag4j.meetingplanner.webapp.controller;
 
-import org.rag4j.meetingplanner.agent.service.EmbabelAgentService;
+import com.embabel.agent.api.common.autonomy.AgentInvocation;
+import com.embabel.agent.core.AgentPlatform;
+import org.rag4j.meetingplanner.agent.model.Meeting;
+import org.rag4j.meetingplanner.agent.model.MeetingRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 public class HomeController {
+    private final AgentPlatform agentPlatform;
 
-    private final EmbabelAgentService agentService;
-
-    public HomeController(EmbabelAgentService agentService) {
-        this.agentService = agentService;
+    public HomeController(AgentPlatform agentPlatform) {
+        this.agentPlatform = agentPlatform;
     }
 
     @GetMapping("/")
@@ -24,7 +29,7 @@ public class HomeController {
     @GetMapping("/meetings")
     public String meetings(Model model) {
         model.addAttribute("title", "Meetings");
-        model.addAttribute("meetings", agentService.getAllMeetings());
+        model.addAttribute("meetings", List.of());
         return "meetings";
     }
 
@@ -32,6 +37,14 @@ public class HomeController {
     public String createMeeting(Model model) {
         model.addAttribute("title", "Create Meeting");
         return "create-meeting";
+    }
+
+    @PostMapping("/create-meeting")
+    public String handleCreateMeeting(MeetingRequest meetingRequest, Model model) {
+        var agentInvocation = AgentInvocation.create(agentPlatform, Meeting.class);
+        Meeting meeting = agentInvocation.invoke(meetingRequest);
+        model.addAttribute("meetings", List.of(meeting));
+        return "redirect:/meetings";
     }
 
 }

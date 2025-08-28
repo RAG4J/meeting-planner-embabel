@@ -20,3 +20,4 @@
 *.ear
 
 .java-version
+.env

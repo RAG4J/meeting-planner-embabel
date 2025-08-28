@@ -4,7 +4,7 @@ server:
 spring:
   application:
     name: meeting-planner-web-app
-  
+
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
@@ -19,7 +19,6 @@ spring:
 # Embabel Agent Configuration
 embabel:
   agent:
-    base-url: http://localhost:8081
     timeout: 30s
     
 logging:
