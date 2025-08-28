@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Meeting planner')}"><title>is replaced</title></head>
+<body>
+    <nav th:replace="~{layout/base :: nav}"></nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section text-center">
+            <div class="container">
+                <h1 class="display-4 fw-bold mb-4" th:text="${message}">Welcome to Meeting Planner!</h1>
+                <p class="lead mb-4">Organize, plan, and manage your meetings with AI-powered assistance</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/create-meeting" class="btn btn-light btn-lg">
+                        <i class="fas fa-plus me-2"></i>Create Meeting
+                    </a>
+                    <a href="/meetings" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-list me-2"></i>View Meetings
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row text-center mb-5">
+                    <div class="col-lg-8 mx-auto">
+                        <h2 class="display-5 fw-bold mb-3">Smart Meeting Management</h2>
+                        <p class="lead text-muted">Powered by Embabel AI to make your meetings more productive</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 feature-card border-0 shadow">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    <i class="fas fa-robot fa-3x text-primary"></i>
+                                </div>
+                                <h5 class="card-title">AI-Powered Planning</h5>
+                                <p class="card-text text-muted">Let Embabel suggest optimal meeting times, participants, and agendas based on your requirements.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 feature-card border-0 shadow">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    <i class="fas fa-calendar-check fa-3x text-success"></i>
+                                </div>
+                                <h5 class="card-title">Smart Scheduling</h5>
+                                <p class="card-text text-muted">Automatically find the best times that work for all participants across different time zones.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 feature-card border-0 shadow">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    <i class="fas fa-users fa-3x text-info"></i>
+                                </div>
+                                <h5 class="card-title">Team Collaboration</h5>
+                                <p class="card-text text-muted">Invite participants, share agendas, and collaborate on meeting preparation seamlessly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 mx-auto text-center">
+                        <h3 class="mb-4">Get Started</h3>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="/create-meeting" class="btn btn-primary btn-lg me-md-2">
+                                <i class="fas fa-calendar-plus me-2"></i>Schedule New Meeting
+                            </a>
+                            <a href="/meetings" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-eye me-2"></i>Browse Meetings
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+    <div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>

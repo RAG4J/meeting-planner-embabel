@@ -1,0 +1,22 @@
+# Maven
+**/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA
+/.idea/
+/*.iml
+/out/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Others
+*.class
+*.jar
+*.war
+*.ear
+
+.java-version

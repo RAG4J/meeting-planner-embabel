@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Create Meeting')}"><title>is replaced</title></head>
+<body>
+    <!-- Navigation -->
+    <nav th:replace="~{layout/base :: nav}"></nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">
+                                <i class="fas fa-calendar-plus me-2"></i>Create New Meeting
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="createMeetingForm">
+                                <div class="row g-3">
+                                    <!-- Meeting Title -->
+                                    <div class="col-md-12">
+                                        <label for="meetingTitle" class="form-label">Meeting Title <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="meetingTitle" name="title" 
+                                               placeholder="Enter meeting title" required>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="col-md-12">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3" 
+                                                  placeholder="Describe the purpose and agenda of this meeting"></textarea>
+                                    </div>
+
+                                    <!-- Date and Time -->
+                                    <div class="col-md-6">
+                                        <label for="meetingDate" class="form-label">Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="meetingDate" name="date" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="startTime" class="form-label">Start Time <span class="text-danger">*</span></label>
+                                        <input type="time" class="form-control" id="startTime" name="startTime" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="duration" class="form-label">Duration (minutes)</label>
+                                        <select class="form-select" id="duration" name="duration">
+                                            <option value="15">15 minutes</option>
+                                            <option value="30" selected>30 minutes</option>
+                                            <option value="45">45 minutes</option>
+                                            <option value="60">1 hour</option>
+                                            <option value="90">1.5 hours</option>
+                                            <option value="120">2 hours</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Meeting Type -->
+                                    <div class="col-md-6">
+                                        <label for="meetingType" class="form-label">Meeting Type</label>
+                                        <select class="form-select" id="meetingType" name="type">
+                                            <option value="team">Team Meeting</option>
+                                            <option value="client">Client Call</option>
+                                            <option value="oneOnOne">One-on-One</option>
+                                            <option value="training">Training Session</option>
+                                            <option value="review">Review Meeting</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Location/Platform -->
+                                    <div class="col-md-6">
+                                        <label for="location" class="form-label">Location/Platform</label>
+                                        <select class="form-select" id="location" name="location">
+                                            <option value="zoom">Zoom</option>
+                                            <option value="teams">Microsoft Teams</option>
+                                            <option value="meet">Google Meet</option>
+                                            <option value="conference-room">Conference Room</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Participants -->
+                                    <div class="col-md-12">
+                                        <label for="participants" class="form-label">Participants</label>
+                                        <textarea class="form-control" id="participants" name="participants" rows="2" 
+                                                  placeholder="Enter email addresses separated by commas"></textarea>
+                                        <div class="form-text">Enter participant email addresses, separated by commas</div>
+                                    </div>
+
+                                    <!-- AI Assistant Options -->
+                                    <div class="col-md-12">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-title">
+                                                    <i class="fas fa-robot me-2 text-primary"></i>Embabel AI Assistant
+                                                </h6>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="suggestOptimalTime" name="suggestOptimalTime">
+                                                    <label class="form-check-label" for="suggestOptimalTime">
+                                                        Suggest optimal meeting time based on participants' availability
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="generateAgenda" name="generateAgenda">
+                                                    <label class="form-check-label" for="generateAgenda">
+                                                        Generate meeting agenda based on title and description
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="sendReminders" name="sendReminders" checked>
+                                                    <label class="form-check-label" for="sendReminders">
+                                                        Send automated reminders to participants
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-end gap-2 mt-4">
+                                            <a href="/meetings" class="btn btn-outline-secondary">Cancel</a>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-2"></i>Create Meeting
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- AI Suggestions Panel (initially hidden) -->
+                    <div class="card mt-4" id="aiSuggestions" style="display: none;">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-lightbulb me-2"></i>Embabel AI Suggestions
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                AI suggestions will appear here based on your meeting details.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Simple form validation and AI suggestion trigger
+            document.getElementById('createMeetingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show success message (placeholder)
+                alert('Meeting created successfully! (This would integrate with the Embabel agent)');
+                
+                // Redirect to meetings page
+                window.location.href = '/meetings';
+            });
+
+            // Show AI suggestions when certain checkboxes are checked
+            document.addEventListener('DOMContentLoaded', function() {
+                const aiCheckboxes = document.querySelectorAll('input[name="suggestOptimalTime"], input[name="generateAgenda"]');
+                const aiSuggestionsPanel = document.getElementById('aiSuggestions');
+                
+                aiCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            aiSuggestionsPanel.style.display = 'block';
+                        }
+                    });
+                });
+            });
+        </script>
+    </main>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+    <div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>
