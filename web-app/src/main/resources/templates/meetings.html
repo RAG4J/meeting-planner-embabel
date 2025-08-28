@@ -2,153 +2,100 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout/base :: head('Meetings')}"><title>is replaced</title></head>
 <body>
-    <nav th:replace="~{layout/base :: nav}"></nav>
+<nav th:replace="~{layout/base :: nav}"></nav>
 
-    <!-- Main Content -->
-    <main>
-        <div class="container py-5">
-            <div class="row">
-                <div class="col-lg-10 mx-auto">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="mb-0">Your Meetings</h2>
-                        <a href="/create-meeting" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>New Meeting
-                        </a>
+<!-- Main Content -->
+<main>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">Your Meetings</h2>
+                    <a href="/create-meeting" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>New Meeting
+                    </a>
+                </div>
+
+                <!-- Filters -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <select class="form-select">
+                                    <option>All Meetings</option>
+                                    <option>Upcoming</option>
+                                    <option>Past</option>
+                                    <option>Today</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select">
+                                    <option>All Types</option>
+                                    <option>Team Meeting</option>
+                                    <option>Client Call</option>
+                                    <option>One-on-One</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Search meetings...">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-filter me-2"></i>Filter
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Filters -->
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option>All Meetings</option>
-                                        <option>Upcoming</option>
-                                        <option>Past</option>
-                                        <option>Today</option>
-                                    </select>
+                <!-- Sample meetings (will be replaced with dynamic data) -->
+
+                <div class="row g-4">
+                    <div class="col-md-6" th:each="meeting : ${meetings}">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="badge" th:text="${meeting.status}"></span>
+                                <small class="text-muted" th:text="${meeting.startTime}"></small>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${meeting.title}"></h5>
+                                <p class="card-text text-muted" th:text="${meeting.description}"></p>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-users me-2 text-muted"></i>
+                                    <span th:each="participant, stat : ${meeting.getParticipants()}"
+                                          th:text="${participant + (stat.last ? '' : ', ')}"></span>
                                 </div>
-                                <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option>All Types</option>
-                                        <option>Team Meeting</option>
-                                        <option>Client Call</option>
-                                        <option>One-on-One</option>
-                                    </select>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-clock me-2 text-muted"></i>
+                                    <span th:text="${meeting.durationMinutes}"></span>
                                 </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" placeholder="Search meetings...">
-                                </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-outline-secondary w-100">
-                                        <i class="fas fa-filter me-2"></i>Filter
-                                    </button>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-outline-primary">View</button>
+                                    <button class="btn btn-outline-secondary">Edit</button>
+                                    <button class="btn btn-outline-success">Join</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Sample meetings (will be replaced with dynamic data) -->
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-success">Upcoming</span>
-                                    <small class="text-muted">Tomorrow, 10:00 AM</small>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">Weekly Team Standup</h5>
-                                    <p class="card-text text-muted">Review progress, discuss blockers, and plan for the week ahead.</p>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-users me-2 text-muted"></i>
-                                        <span>5 participants</span>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-clock me-2 text-muted"></i>
-                                        <span>30 minutes</span>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-transparent">
-                                    <div class="btn-group w-100">
-                                        <button class="btn btn-outline-primary">View</button>
-                                        <button class="btn btn-outline-secondary">Edit</button>
-                                        <button class="btn btn-outline-success">Join</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-primary">Today</span>
-                                    <small class="text-muted">2:00 PM</small>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">Client Presentation</h5>
-                                    <p class="card-text text-muted">Present project progress and gather feedback from stakeholders.</p>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-users me-2 text-muted"></i>
-                                        <span>8 participants</span>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-clock me-2 text-muted"></i>
-                                        <span>60 minutes</span>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-transparent">
-                                    <div class="btn-group w-100">
-                                        <button class="btn btn-outline-primary">View</button>
-                                        <button class="btn btn-outline-secondary">Edit</button>
-                                        <button class="btn btn-success">Join Now</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-secondary">Completed</span>
-                                    <small class="text-muted">Yesterday, 3:00 PM</small>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">Project Kickoff</h5>
-                                    <p class="card-text text-muted">Initial meeting to discuss project scope and timeline.</p>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-users me-2 text-muted"></i>
-                                        <span>6 participants</span>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-clock me-2 text-muted"></i>
-                                        <span>45 minutes</span>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-transparent">
-                                    <div class="btn-group w-100">
-                                        <button class="btn btn-outline-primary">View Summary</button>
-                                        <button class="btn btn-outline-info">Notes</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Empty state (show when no meetings) -->
-                    <div class="text-center py-5" style="display: none;">
-                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                        <h4>No meetings found</h4>
-                        <p class="text-muted mb-4">You haven't scheduled any meetings yet. Create your first meeting to get started!</p>
-                        <a href="/create-meeting" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Create Your First Meeting
-                        </a>
-                    </div>
+                </div>
+                <!-- Empty state (show when no meetings) -->
+                <div class="text-center py-5" style="display: none;">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h4>No meetings found</h4>
+                    <p class="text-muted mb-4">You haven't scheduled any meetings yet. Create your first meeting to get
+                        started!</p>
+                    <a href="/create-meeting" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create Your First Meeting
+                    </a>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
-    <footer th:replace="~{layout/base :: footer}"></footer>
-    <div th:replace="~{layout/base :: scripts}"></div>
+<footer th:replace="~{layout/base :: footer}"></footer>
+<div th:replace="~{layout/base :: scripts}"></div>
 </body>
 </html>

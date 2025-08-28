@@ -1,0 +1,20 @@
+POST http://localhost:8080/create-meeting
+Content-Type: application/x-www-form-urlencoded
+
+title = Team Planning Meeting &
+description = Weekly planning session to discuss project priorities and roadmap &
+date = 2024-09-01 &
+startTime = 10:00 &
+durationMinutes = 60 &
+location = Conference Room A &
+participants = jettro@rag4j.org,daniel@rag4j.org &
+suggestOptimalTime = true &
+generateAgenda = true &
+sendReminders = true
+
+###
+
+GET http://localhost:8080/meetings
+
+
+###

@@ -17,7 +17,19 @@
                             </h3>
                         </div>
                         <div class="card-body">
-                            <form id="createMeetingForm">
+                            <!-- Success/Error Messages -->
+                            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span th:text="${success}">Success message</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <span th:text="${error}">Error message</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            
+                            <form id="createMeetingForm" th:action="@{/create-meeting}" method="post">
                                 <div class="row g-3">
                                     <!-- Meeting Title -->
                                     <div class="col-md-12">
@@ -44,7 +56,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="duration" class="form-label">Duration (minutes)</label>
-                                        <select class="form-select" id="duration" name="duration">
+                                        <select class="form-select" id="duration" name="durationMinutes">
                                             <option value="15">15 minutes</option>
                                             <option value="30" selected>30 minutes</option>
                                             <option value="45">45 minutes</option>
@@ -134,13 +146,8 @@
         <script>
             // Simple form validation and AI suggestion trigger
             document.getElementById('createMeetingForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Show success message (placeholder)
-                alert('Meeting created successfully! (This would integrate with the Embabel agent)');
-                
-                // Redirect to meetings page
-                window.location.href = '/meetings';
+                // Let the form submit naturally to the controller
+                // No preventDefault() - allow normal form submission
             });
 
             // Show AI suggestions when certain checkboxes are checked

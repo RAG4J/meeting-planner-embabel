@@ -4,7 +4,12 @@ import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.common.OperationContext;
+import com.embabel.agent.api.common.StuckHandler;
+import com.embabel.agent.api.common.StuckHandlerResult;
+import com.embabel.agent.api.common.StuckHandlingResultCode;
 import com.embabel.agent.config.models.OpenAiModels;
+import com.embabel.agent.core.AgentProcess;
+import org.jetbrains.annotations.NotNull;
 import org.rag4j.meetingplanner.agent.model.Meeting;
 import org.rag4j.meetingplanner.agent.model.MeetingRequest;
 import org.rag4j.meetingplanner.agent.model.Person;
@@ -19,8 +24,35 @@ import java.util.List;
         description = "An agent that helps to plan meetings by checking availability and scheduling them.",
         version = "1.0.0"
 )
-public record MeetingAgent(PersonFinder personFinder) {
+public record MeetingAgent(PersonFinder personFinder) implements StuckHandler {
     private static final Logger logger = LoggerFactory.getLogger(MeetingAgent.class);
+
+
+//    @Action(description = "Find participants by their email addresses")
+//    public List<Person> findParticipants(MeetingRequest request) {
+//        logger.info("Find participants by email addresses");
+//        return request.getParticipants().stream()
+//                .map(personFinder::findByEmail)
+//                .toList();
+//    }
+
+//    @Action(description = "Check availability of all participants for a given day and time range")
+//    public String checkAllAvailable(MeetingRequest request, List<Person> participants) {
+//        logger.info("Check availability of all participants for the meeting request: {}", request);
+//        boolean allAvailable = participants.stream()
+//                .allMatch(person -> person.checkAvailability(
+//                        request.getDate(),
+//                        request.getStartTime(),
+//                        request.getStartTime().plusMinutes(request.getDurationMinutes())
+//                ));
+//
+//        if (allAvailable) {
+//            return "All participants are available.";
+//        } else {
+//            return "Not all participants are available.";
+//        }
+//    }
+
 
     @AchievesGoal(description = "Book a meeting if all participants are available")
     @Action
@@ -46,5 +78,14 @@ public record MeetingAgent(PersonFinder personFinder) {
         logger.info("Response generated: {}", response);
         return response;
 
+    }
+
+    @NotNull
+    @Override
+    public StuckHandlerResult handleStuck(@NotNull AgentProcess agentProcess) {
+        logger.info("Received stuck request: {}", agentProcess);
+
+        throw new RuntimeException("Oh my, I am stuck!");
+//        return new StuckHandlerResult("Sorry, I am unable to process your request at the moment.", this, StuckHandlingResultCode.REPLAN, agentProcess);
     }
 }

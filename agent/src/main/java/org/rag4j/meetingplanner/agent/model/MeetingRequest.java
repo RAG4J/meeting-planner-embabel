@@ -85,6 +85,7 @@ public class MeetingRequest {
                 ", date=" + date +
                 ", startTime=" + startTime +
                 ", durationMinutes=" + durationMinutes +
+                ", participants=" + String.join(", ", participants) +
                 '}';
     }
 }

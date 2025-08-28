@@ -75,6 +75,10 @@ public class Agenda {
         return availableSlots;
     }
 
+    public List<AgendaItem> getMeetings() {
+        return new ArrayList<>(items);
+    }
+
     public record AgendaItem(LocalDate day, LocalTime start, LocalTime end, String title) {
         // validate if end is after start
         public AgendaItem {
