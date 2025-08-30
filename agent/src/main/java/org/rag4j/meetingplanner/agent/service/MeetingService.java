@@ -3,6 +3,7 @@ package org.rag4j.meetingplanner.agent.service;
 import org.rag4j.meetingplanner.agent.model.Meeting;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -14,8 +15,9 @@ public class MeetingService {
     }
 
     public List<Meeting> getAllMeetings() {
-        return meetings;
-    }
+        return meetings.stream()
+                .sorted(Comparator.comparing(Meeting::getStartTime))
+                .toList();    }
 
     public void addMeeting(Meeting meeting) {
         meetings.add(meeting);

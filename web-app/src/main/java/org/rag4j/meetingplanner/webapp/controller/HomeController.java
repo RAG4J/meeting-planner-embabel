@@ -2,7 +2,6 @@ package org.rag4j.meetingplanner.webapp.controller;
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
-import org.rag4j.meetingplanner.agent.MeetingAgent;
 import org.rag4j.meetingplanner.agent.model.Meeting;
 import org.rag4j.meetingplanner.agent.model.MeetingRequest;
 import org.rag4j.meetingplanner.agent.model.MeetingResponse;
@@ -17,7 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,10 +28,12 @@ public class HomeController {
 
     private final AgentPlatform agentPlatform;
     private final MeetingService meetingService;
+    private final PersonFinder personFinder;
 
-    public HomeController(AgentPlatform agentPlatform, MeetingService meetingService) {
+    public HomeController(AgentPlatform agentPlatform, MeetingService meetingService, PersonFinder personFinder) {
         this.agentPlatform = agentPlatform;
         this.meetingService = meetingService;
+        this.personFinder = personFinder;
     }
 
     @GetMapping("/")
@@ -89,6 +92,41 @@ public class HomeController {
             model.addAttribute("meetingRequest", meetingRequest);
             return "create-meeting";
         }
+    }
+
+    @GetMapping("/persons")
+    public String persons(Model model) {
+        var persons = personFinder.getAllPersons();
+        model.addAttribute("title", "Persons");
+        model.addAttribute("persons", persons);
+        return "persons";
+    }
+
+    @GetMapping("/persons/{email}/agenda")
+    public String personAgenda(@PathVariable String email, 
+                              @RequestParam(required = false) String date,
+                              Model model) {
+        Person person = personFinder.findByEmail(email);
+        if (person == null) {
+            model.addAttribute("error", "Person not found");
+            return "redirect:/persons";
+        }
+        
+        LocalDate selectedDate = date != null ? LocalDate.parse(date) : LocalDate.now();
+        
+        var agendaItems = person.agenda().getMeetings().stream()
+                .filter(item -> item.day().equals(selectedDate))
+                .sorted((a, b) -> a.start().compareTo(b.start()))
+                .toList();
+        
+        var availableSlots = person.availabilityForDay(selectedDate);
+        
+        model.addAttribute("title", person.name() + "'s Agenda");
+        model.addAttribute("person", person);
+        model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute("agendaItems", agendaItems);
+        model.addAttribute("availableSlots", availableSlots);
+        return "person-agenda";
     }
 
 }
