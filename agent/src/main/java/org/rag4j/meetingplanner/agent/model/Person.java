@@ -2,12 +2,23 @@ package org.rag4j.meetingplanner.agent.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public record Person(String email, String name, Agenda agenda) {
+public record Person(
+        @NotBlank
+        @Email
+        String email,
+        @NotBlank
+        String name,
+        @NotNull
+        Agenda agenda
+) {
     private static final Logger logger = LoggerFactory.getLogger(Person.class);
 
     public boolean checkAvailability(LocalDate day, LocalTime start, LocalTime end) {
