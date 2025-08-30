@@ -7,6 +7,11 @@ import org.springframework.ai.tool.annotation.Tool;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Represents a group of participants for a meeting.
+ *
+ * @param participants list of participants
+ */
 public record Participants(List<Person> participants) {
     private static final Logger logger = LoggerFactory.getLogger(Participants.class);
 

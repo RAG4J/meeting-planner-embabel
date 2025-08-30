@@ -24,7 +24,6 @@ public class MeetingRequest {
     
     private Integer durationMinutes = 30; // Default 30 minutes
     
-    
     private String location;
     
     private List<String> participants;
