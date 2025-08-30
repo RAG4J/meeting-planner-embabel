@@ -2,8 +2,10 @@ package org.rag4j.meetingplanner.webapp.controller;
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
+import org.rag4j.meetingplanner.agent.MeetingAgent;
 import org.rag4j.meetingplanner.agent.model.Meeting;
 import org.rag4j.meetingplanner.agent.model.MeetingRequest;
+import org.rag4j.meetingplanner.agent.model.MeetingResponse;
 import org.rag4j.meetingplanner.agent.model.Person;
 import org.rag4j.meetingplanner.agent.service.MeetingService;
 import org.rag4j.meetingplanner.agent.service.PersonFinder;
@@ -68,10 +70,17 @@ public class HomeController {
                 meetingRequest.setParticipants(participantList);
             }
             
-            var agentInvocation = AgentInvocation.create(agentPlatform, Meeting.class);
-            Meeting meeting = agentInvocation.invoke(meetingRequest);
-            meetingService.addMeeting(meeting);
-            model.addAttribute("success", "Meeting created successfully!");
+            var agentInvocation = AgentInvocation.create(agentPlatform, MeetingResponse.class);
+            MeetingResponse meeting = agentInvocation.invoke(meetingRequest);
+            if (meeting.getMeeting().isPresent()) {
+                model.addAttribute("success", "Meeting created successfully!");
+                meetingService.addMeeting(meeting.getMeeting().get());
+            } else {
+                model.addAttribute("error", "Failed to create meeting: " + meeting.getMessage());
+                model.addAttribute("title", "Create Meeting");
+                model.addAttribute("meetingRequest", meetingRequest);
+                return "create-meeting";
+            }
             return "redirect:/meetings";
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
