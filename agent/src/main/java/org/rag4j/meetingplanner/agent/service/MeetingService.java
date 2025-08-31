@@ -1,6 +1,6 @@
 package org.rag4j.meetingplanner.agent.service;
 
-import org.rag4j.meetingplanner.agent.model.Meeting;
+import org.rag4j.meetingplanner.agent.model.meeting.Meeting;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;

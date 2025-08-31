@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.agent.model;
+package org.rag4j.meetingplanner.agent.model.meeting;
 
 import java.util.Optional;
 

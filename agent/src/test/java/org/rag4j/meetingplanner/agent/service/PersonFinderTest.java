@@ -2,8 +2,8 @@ package org.rag4j.meetingplanner.agent.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.rag4j.meetingplanner.agent.model.Agenda;
-import org.rag4j.meetingplanner.agent.model.Person;
+import org.rag4j.meetingplanner.agent.model.person.Agenda;
+import org.rag4j.meetingplanner.agent.model.person.Person;
 
 import java.util.List;
 import jakarta.validation.Validation;
@@ -65,7 +65,7 @@ class PersonFinderTest {
     @DisplayName("Overwrites person with duplicate email")
     void overwritesPersonWithDuplicateEmail() {
         PersonFinder finder = new PersonFinder();
-        Person original = finder.findByEmail("jettro@rag4j.org");
+        finder.findByEmail("jettro@rag4j.org");
         Person updated = new Person("jettro@rag4j.org", "Updated Name", new Agenda());
         finder.addPerson(updated);
         Person found = finder.findByEmail("jettro@rag4j.org");

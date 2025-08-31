@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.agent.model;
+package org.rag4j.meetingplanner.agent.model.meeting;
 
 /**
  * Enumeration of possible meeting statuses

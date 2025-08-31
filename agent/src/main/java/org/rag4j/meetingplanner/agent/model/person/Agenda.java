@@ -1,8 +1,9 @@
-package org.rag4j.meetingplanner.agent.model;
+package org.rag4j.meetingplanner.agent.model.person;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Agenda {
@@ -13,7 +14,7 @@ public class Agenda {
      * @param day the day to check
      * @param start the start time
      * @param end the end time
-     * @return
+     * @return True if the time slot is available, false otherwise
      */
     public boolean checkAvailability(LocalDate day, LocalTime start, LocalTime end) {
         for (AgendaItem item : items) {
@@ -46,7 +47,7 @@ public class Agenda {
         // Collect and sort items for the day
         List<AgendaItem> dayItems = items.stream()
                 .filter(item -> item.day().equals(day))
-                .sorted((a, b) -> a.start().compareTo(b.start()))
+                .sorted(Comparator.comparing(AgendaItem::start))
                 .toList();
 
         // Walk through the day's items, clamped to working hours

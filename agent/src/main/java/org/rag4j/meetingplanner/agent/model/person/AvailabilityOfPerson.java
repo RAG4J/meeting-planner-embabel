@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.agent.model;
+package org.rag4j.meetingplanner.agent.model.person;
 
 import java.util.List;
 
@@ -7,5 +7,5 @@ import java.util.List;
  * @param availableSlots list of available time slots
  * @param participant the participant whose availability is represented
  */
-public record ParticipantAvailability(List<String> availableSlots, Person participant) {
+public record AvailabilityOfPerson(List<String> availableSlots, Person participant) {
 }

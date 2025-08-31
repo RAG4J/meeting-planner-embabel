@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.agent.model;
+package org.rag4j.meetingplanner.agent.model.person;
 
 /**
  * Represents the availability status of a person

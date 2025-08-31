@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.agent.model;
+package org.rag4j.meetingplanner.agent.model.person;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,7 +2,7 @@ package org.rag4j.meetingplanner.agent.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.rag4j.meetingplanner.agent.model.Meeting;
+import org.rag4j.meetingplanner.agent.model.meeting.Meeting;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.agent.model;
+package org.rag4j.meetingplanner.agent.model.person;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +32,10 @@ public record Participants(List<Person> participants) {
     }
 
     @Tool (description = "Get the availability of all participants for a given day. Returns a list of available time slots for each participant.")
-    public List<ParticipantAvailability> availabilityForDay(LocalDate day) {
+    public List<AvailabilityOfPerson> availabilityForDay(LocalDate day) {
         logger.info("Getting availability for all participants on {}", day);
         return participants.stream()
-                .map(person -> new ParticipantAvailability(person.availabilityForDay(day), person))
+                .map(person -> new AvailabilityOfPerson(person.availabilityForDay(day), person))
                 .toList();
     }
 }

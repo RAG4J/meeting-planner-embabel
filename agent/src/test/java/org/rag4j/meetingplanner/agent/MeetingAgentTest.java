@@ -3,7 +3,11 @@ package org.rag4j.meetingplanner.agent;
 import com.embabel.agent.testing.unit.FakeOperationContext;
 import com.embabel.agent.testing.unit.FakePromptRunner;
 import org.junit.jupiter.api.Test;
-import org.rag4j.meetingplanner.agent.model.*;
+import org.rag4j.meetingplanner.agent.model.meeting.MeetingRequest;
+import org.rag4j.meetingplanner.agent.model.meeting.MeetingResponse;
+import org.rag4j.meetingplanner.agent.model.person.Agenda;
+import org.rag4j.meetingplanner.agent.model.person.Participants;
+import org.rag4j.meetingplanner.agent.model.person.Person;
 import org.rag4j.meetingplanner.agent.service.PersonFinder;
 
 import java.util.List;

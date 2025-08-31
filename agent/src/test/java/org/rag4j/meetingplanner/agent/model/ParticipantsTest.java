@@ -3,6 +3,7 @@ package org.rag4j.meetingplanner.agent.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rag4j.meetingplanner.agent.model.person.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -132,24 +133,24 @@ class ParticipantsTest {
         person2.agenda().bookMeeting(testDay, LocalTime.of(14, 0), LocalTime.of(15, 0), "Meeting 2");
         // person3 has no meetings
 
-        List<ParticipantAvailability> availability = participants.availabilityForDay(testDay);
+        List<AvailabilityOfPerson> availability = participants.availabilityForDay(testDay);
 
         assertEquals(3, availability.size());
         
         // Check person1's availability (should have gaps around 10-11 meeting)
-        ParticipantAvailability person1Availability = availability.get(0);
+        AvailabilityOfPerson person1Availability = availability.getFirst();
         assertEquals(person1, person1Availability.participant());
         assertTrue(person1Availability.availableSlots().contains("09:00-10:00"));
         assertTrue(person1Availability.availableSlots().contains("11:00-17:00"));
         
         // Check person2's availability (should have gaps around 14-15 meeting)
-        ParticipantAvailability person2Availability = availability.get(1);
+        AvailabilityOfPerson person2Availability = availability.get(1);
         assertEquals(person2, person2Availability.participant());
         assertTrue(person2Availability.availableSlots().contains("09:00-14:00"));
         assertTrue(person2Availability.availableSlots().contains("15:00-17:00"));
         
         // Check person3's availability (should be fully available)
-        ParticipantAvailability person3Availability = availability.get(2);
+        AvailabilityOfPerson person3Availability = availability.get(2);
         assertEquals(person3, person3Availability.participant());
         assertEquals(List.of("09:00-17:00"), person3Availability.availableSlots());
     }
@@ -162,7 +163,7 @@ class ParticipantsTest {
         person2.agenda().bookMeeting(testDay, LocalTime.of(9, 0), LocalTime.of(17, 0), "All Day Meeting 2");
         person3.agenda().bookMeeting(testDay, LocalTime.of(9, 0), LocalTime.of(17, 0), "All Day Meeting 3");
 
-        List<ParticipantAvailability> availability = participants.availabilityForDay(testDay);
+        List<AvailabilityOfPerson> availability = participants.availabilityForDay(testDay);
 
         assertEquals(3, availability.size());
         assertTrue(availability.stream().allMatch(pa -> pa.availableSlots().isEmpty()));
@@ -177,7 +178,7 @@ class ParticipantsTest {
                 testDay, LocalTime.of(10, 0), LocalTime.of(11, 0));
         List<String> bookingConfirmations = emptyParticipants.bookMeetingForAll(
                 testDay, LocalTime.of(10, 0), LocalTime.of(11, 0), "Test Meeting");
-        List<ParticipantAvailability> dayAvailability = emptyParticipants.availabilityForDay(testDay);
+        List<AvailabilityOfPerson> dayAvailability = emptyParticipants.availabilityForDay(testDay);
 
         assertTrue(availability.isEmpty());
         assertTrue(bookingConfirmations.isEmpty());
@@ -193,8 +194,8 @@ class ParticipantsTest {
                 testDay, LocalTime.of(10, 0), LocalTime.of(11, 0));
 
         assertEquals(1, availability.size());
-        assertEquals(person1, availability.get(0).person());
-        assertTrue(availability.get(0).available());
+        assertEquals(person1, availability.getFirst().person());
+        assertTrue(availability.getFirst().available());
     }
 
     @Test
@@ -225,7 +226,7 @@ class ParticipantsTest {
         List<String> confirmations = participants.bookMeetingForAll(testDay, startTime, endTime, meetingTitle);
 
         assertEquals(3, confirmations.size());
-        assertTrue(confirmations.get(0).contains("John Doe"));
+        assertTrue(confirmations.getFirst().contains("John Doe"));
         assertTrue(confirmations.get(0).contains(meetingTitle));
         assertTrue(confirmations.get(0).contains(testDay.toString()));
         

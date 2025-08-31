@@ -2,10 +2,10 @@ package org.rag4j.meetingplanner.webapp.controller;
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
-import org.rag4j.meetingplanner.agent.model.Meeting;
-import org.rag4j.meetingplanner.agent.model.MeetingRequest;
-import org.rag4j.meetingplanner.agent.model.MeetingResponse;
-import org.rag4j.meetingplanner.agent.model.Person;
+import org.rag4j.meetingplanner.agent.model.meeting.MeetingRequest;
+import org.rag4j.meetingplanner.agent.model.meeting.MeetingResponse;
+import org.rag4j.meetingplanner.agent.model.person.Agenda;
+import org.rag4j.meetingplanner.agent.model.person.Person;
 import org.rag4j.meetingplanner.agent.service.MeetingService;
 import org.rag4j.meetingplanner.agent.service.PersonFinder;
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -116,7 +117,7 @@ public class HomeController {
         
         var agendaItems = person.agenda().getMeetings().stream()
                 .filter(item -> item.day().equals(selectedDate))
-                .sorted((a, b) -> a.start().compareTo(b.start()))
+                .sorted(Comparator.comparing(Agenda.AgendaItem::start))
                 .toList();
         
         var availableSlots = person.availabilityForDay(selectedDate);

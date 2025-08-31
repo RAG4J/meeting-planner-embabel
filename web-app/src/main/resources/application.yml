@@ -23,5 +23,5 @@ embabel:
     
 logging:
   level:
-    com.embabel: DEBUG
+    com.embabel: INFO
     org.springframework.web: INFO
