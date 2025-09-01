@@ -5,7 +5,6 @@ spring:
         enabled: true
         type: SYNC
         stdio:
-#          servers-configuration: classpath:mcp-servers-config.json
           connections:
             time:
               command: docker
@@ -19,8 +18,5 @@ spring:
               command: java
               args:
                 - -Dspring.ai.mcp.server.stdio=true
-                - -Dspring.main.web-application-type=none
-                - -Dspring.main.banner-mode=off
-                - -Dlogging.pattern.console=
                 - -jar
                 - "${LOCATION_MCP_JAR:${user.dir}/location-mcp/target/location-mcp-1.0.0-SNAPSHOT.jar}"

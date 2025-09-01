@@ -20,7 +20,10 @@ public class LocationService {
         initializeLocations();
     }
 
-    @Tool(name = "all-locations", description = "Get all available meeting locations.")
+    @Tool(
+            name = "all-locations",
+            description = "Get all available meeting locations."
+    )
     public LocationResponse getAllLocations() {
         logger.info("Fetching all available locations.");
 
@@ -59,7 +62,7 @@ public class LocationService {
 
     @Tool(
             name = "book-room",
-            description = "Book a room at a specific location at a day and time."
+            description = "Book a room at a specific location on a day and time."
     )
     public BookRoomResponse bookRoom(BookRoomRequest request) {
         logger.info("Book a room {}", request);

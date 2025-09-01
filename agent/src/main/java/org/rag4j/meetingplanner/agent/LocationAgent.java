@@ -66,7 +66,7 @@ public class LocationAgent {
     }
 
     @Action(toolGroups = {"location"}, description = "Find the best matching location for a meeting based on the provided description.")
-    public Location bookMeeting(RoomRequest request, OperationContext context) {
+    public Location findLocation(RoomRequest request, OperationContext context) {
         logger.info("Received meeting request: {}", request);
 
         Location response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
