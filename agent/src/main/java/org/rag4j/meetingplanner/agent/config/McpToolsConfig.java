@@ -36,7 +36,7 @@ public class McpToolsConfig {
                 "location",
                 Set.of(ToolGroupPermission.HOST_ACCESS),
                 mcpSyncClients,
-                callback -> callback.getToolDefinition().name().contains("locations")
+                callback -> callback.getToolDefinition().name().contains("location") || callback.getToolDefinition().name().contains("room")
         );
     }
 

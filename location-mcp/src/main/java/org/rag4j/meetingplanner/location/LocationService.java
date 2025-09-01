@@ -26,8 +26,10 @@ public class LocationService {
         return new LocationResponse(new ArrayList<>(locations.values()));
     }
 
-    @Tool(name = "check-room-availability", description = "Check room availability for a specific location, date, " +
-            "time, duration and number of people.")
+    @Tool(
+            name = "check-room-availability",
+            description = "Check room availability for a specific location, date, time, duration and number of people."
+    )
     public RoomAvailableResponse checkRoomAvailability(RoomAvailableRequest request) {
         logger.info("Checking room availability {}", request);
 
@@ -51,6 +53,32 @@ public class LocationService {
         }
 
         return response;
+    }
+
+    @Tool(
+            name = "book-room",
+            description = "Book a room at a specific location at a day and time."
+    )
+    public BookRoomResponse bookRoom(BookRoomRequest request) {
+        Map<String, Room> stringRoomMap = locationRooms.get(request.locationId());
+        if (stringRoomMap == null) {
+            return new BookRoomResponse(request.locationId(), request.roomId(), false, "You requested an unknown location");
+        }
+        Room room = stringRoomMap.get(request.roomId());
+        if (room == null) {
+            return new BookRoomResponse(request.locationId(), request.roomId(), false, "You requested an unknown room");
+        }
+
+        boolean b = room.agenda().checkAvailability(request.date(), request.startTime(), request.startTime().plusMinutes(request.durationInMinutes()));
+        if (!b) {
+            return new BookRoomResponse(request.locationId(), request.roomId(), false, "No capacity at the requested time");
+        }
+
+        room.agenda().bookMeeting(request.date(),
+                request.startTime(),
+                request.startTime().plusMinutes(request.durationInMinutes()),
+                String.format("Reference %s - Description %s", request.reference(), request.description()));
+        return new BookRoomResponse(request.locationId(), request.roomId(), true, String.format("Booking confirmed for %s", request.reference()));
     }
 
     private void initializeLocations() {
