@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.agent.model.person;
+package org.rag4j.meetingplanner.common.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

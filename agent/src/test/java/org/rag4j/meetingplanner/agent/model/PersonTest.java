@@ -2,18 +2,16 @@ package org.rag4j.meetingplanner.agent.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
+import org.rag4j.meetingplanner.common.model.Agenda;
+import org.rag4j.meetingplanner.agent.model.person.Person;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.ConstraintViolation;
-import org.rag4j.meetingplanner.agent.model.person.Agenda;
-import org.rag4j.meetingplanner.agent.model.person.Person;
-
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

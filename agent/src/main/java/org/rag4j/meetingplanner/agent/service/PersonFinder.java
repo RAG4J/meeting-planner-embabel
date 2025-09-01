@@ -1,6 +1,6 @@
 package org.rag4j.meetingplanner.agent.service;
 
-import org.rag4j.meetingplanner.agent.model.person.Agenda;
+import org.rag4j.meetingplanner.common.model.Agenda;
 import org.rag4j.meetingplanner.agent.model.person.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

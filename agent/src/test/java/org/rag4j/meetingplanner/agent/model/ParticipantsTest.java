@@ -3,7 +3,11 @@ package org.rag4j.meetingplanner.agent.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.rag4j.meetingplanner.agent.model.person.*;
+import org.rag4j.meetingplanner.common.model.Agenda;
+import org.rag4j.meetingplanner.agent.model.person.Available;
+import org.rag4j.meetingplanner.agent.model.person.AvailabilityOfPerson;
+import org.rag4j.meetingplanner.agent.model.person.Participants;
+import org.rag4j.meetingplanner.agent.model.person.Person;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

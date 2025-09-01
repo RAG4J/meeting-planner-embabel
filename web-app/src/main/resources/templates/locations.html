@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Location Lookup')}"><title>is replaced</title></head>
+<body>
+    <!-- Navigation -->
+    <nav th:replace="~{layout/base :: nav}"></nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">
+                                <i class="fas fa-map-marker-alt me-2"></i>Location Lookup
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Success/Error Messages -->
+                            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span th:text="${success}">Success message</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <span th:text="${error}">Error message</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            
+                            <form id="locationSearchForm" th:action="@{/locations}" method="post">
+                                <div class="row g-3">
+                                    <!-- Location Description Input -->
+                                    <div class="col-md-12">
+                                        <label for="description" class="form-label">Location Description <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="description" name="description" 
+                                               th:value="${searchDescription}"
+                                               placeholder="Describe the type of location you're looking for..." 
+                                               required>
+                                        <div class="form-text">
+                                            Enter a description of the location you need (e.g., "conference room for 10 people", "outdoor venue for team building", "restaurant near downtown")
+                                        </div>
+                                    </div>
+
+                                    <!-- AI Assistant Info -->
+                                    <div class="col-md-12">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-title">
+                                                    <i class="fas fa-robot me-2 text-primary"></i>Embabel AI Assistant
+                                                </h6>
+                                                <p class="card-text mb-0">
+                                                    Our AI will help you find the perfect location based on your description. 
+                                                    Be as specific as possible about your requirements.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-end gap-2 mt-4">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-search me-2"></i>Find Locations
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Search Results Placeholder (for future implementation) -->
+                    <div class="card mt-4" id="searchResults" th:if="${location}" style="display: block;">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-map-marked-alt me-2"></i>Suggested location
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light">
+                                <div>
+                                    <span class="strong"><strong>Name:</strong></span>
+                                    <span th:text="${location.name()}">Location details will appear here after search.</span>
+                                </div>
+                                <div>
+                                    <span><strong>Description:</strong></span>
+                                    <span th:text="${location.description()}">Location details will appear here after search.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+    <div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>

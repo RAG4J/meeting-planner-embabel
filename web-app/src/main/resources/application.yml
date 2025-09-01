@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: meeting-planner-web-app
+  config:
+    import: "classpath:agent-application.yml"
 
   thymeleaf:
     cache: false

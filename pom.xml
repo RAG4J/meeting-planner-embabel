@@ -30,13 +30,20 @@
     </properties>
 
     <modules>
-        <module>web-app</module>
+        <module>common</module>
         <module>agent</module>
+        <module>web-app</module>
+        <module>location-mcp</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <!-- Internal dependencies -->
+            <dependency>
+                <groupId>org.rag4j.meeting</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.rag4j.meeting</groupId>
                 <artifactId>agent</artifactId>
