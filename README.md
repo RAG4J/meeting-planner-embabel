@@ -17,6 +17,13 @@ meeting-planner-embabel/
 │   ├── src/main/java/      # AI agent logic with @Agent, @Action, @Tool annotations
 │   ├── src/test/java/      # Comprehensive test suite
 │   └── pom.xml            # Agent dependencies with Embabel starter
+├── location-mcp/           # Spring AI MCP Server for location services
+│   ├── src/main/java/      # Location and room management tools
+│   ├── src/test/java/      # Location service tests
+│   └── pom.xml            # MCP server dependencies
+├── common/                 # Shared utilities and models
+│   ├── src/main/java/      # Common domain models (Agenda, etc.)
+│   └── pom.xml            # Common dependencies
 ├── .env                    # OpenAI API configuration
 ├── WARP.md                # Development guidelines for Warp terminal
 ├── test_requests.http      # HTTP testing endpoints
@@ -28,6 +35,7 @@ meeting-planner-embabel/
 - **Java 21** - Modern Java features including records and pattern matching
 - **Spring Boot 3.5.5** - Application framework with auto-configuration
 - **Embabel Agent Framework 0.1.1** - AI agent platform for intelligent automation
+- **Spring AI 1.0.1** - Spring's AI integration framework with MCP Server support
 - **OpenAI GPT-4 mini** - Large language model for natural language processing
 - **Thymeleaf** - Server-side template engine
 - **Bootstrap 5.3.2** - Responsive CSS framework
@@ -54,6 +62,29 @@ meeting-planner-embabel/
   - `PersonFinder` - Repository for participant management
   - `MeetingService` - Meeting persistence and management
 - **AI Capabilities**: Real-time availability checking, optimal scheduling, automated booking
+
+### Location MCP Module (`location-mcp/`)
+- **Type**: Spring AI MCP Server (Model Context Protocol Server)
+- **Purpose**: Standalone MCP server providing location and room booking tools for AI agents
+- **Key Classes**:
+  - `LocationService` - Exposes location tools via `@Tool` annotations
+  - `App` - Spring Boot MCP server application
+- **Features**:
+  - Room availability checking across multiple locations
+  - Automated room booking with capacity management
+  - Pre-configured locations (Luminis, TechHub, CityView, etc.)
+  - Integration with shared `Agenda` model from common module
+- **Tools Available**:
+  - `all-locations` - Get all available meeting locations
+  - `check-room-availability` - Check room availability by location, date, time, duration
+  - `book-room` - Book a specific room at a location
+
+### Common Module (`common/`)
+- **Type**: Shared library (JAR)
+- **Purpose**: Common utilities and domain models used across modules
+- **Key Classes**:
+  - `Agenda` - Shared agenda management with availability checking
+- **Usage**: Provides shared models for both agent and location-mcp modules
 
 ## Prerequisites
 
@@ -96,6 +127,12 @@ mvn clean install -pl agent
 
 # Build only the web app
 mvn clean install -pl web-app
+
+# Build only the location MCP server
+mvn clean install -pl location-mcp
+
+# Build only the common module
+mvn clean install -pl common
 ```
 
 ## Running the Application
@@ -113,6 +150,20 @@ java -jar web-app/target/web-app-1.0.0-SNAPSHOT.jar
 
 The application will be available at: http://localhost:8080
 
+### Run the Location MCP Server
+The location-mcp module can be run as a standalone MCP server:
+```bash
+cd meeting-planner-embabel/location-mcp
+mvn spring-boot:run
+```
+
+Or run the compiled JAR:
+```bash
+java -jar location-mcp/target/location-mcp-1.0.0-SNAPSHOT.jar
+```
+
+The MCP server exposes location and room booking tools that can be consumed by AI agents.
+
 ## Features
 
 ### ✅ Implemented Features
@@ -120,9 +171,12 @@ The application will be available at: http://localhost:8080
 - **Intelligent Participant Management**: Automatic availability checking across multiple participants
 - **Smart Scheduling**: AI finds optimal meeting times when all participants are available
 - **Automated Booking**: AI agent books meetings automatically after finding suitable times
+- **Location & Room Management**: Spring AI MCP Server with 11+ pre-configured meeting venues
+- **Room Availability & Booking**: Intelligent room selection based on capacity and availability
 - **Modern Web Interface**: Bootstrap 5.3.2 responsive UI with Thymeleaf templates
 - **Comprehensive Person Management**: View individual agendas and availability
 - **Real-time Availability Checking**: Live availability validation for meeting scheduling
+- **MCP Server Integration**: Standalone server exposing location tools via Model Context Protocol
 - **In-Memory Data Persistence**: Quick development setup with sample participants
 
 ### 🔄 Future Enhancements
@@ -174,6 +228,33 @@ Built on **Spring Boot 3.5.5** with modern web patterns:
 - **Bootstrap 5.3.2**: Modern responsive design with minimal custom CSS
 - **Form Handling**: Rich meeting creation form with participant management
 - **Real-time Feedback**: Success/error messaging for AI operations
+
+### MCP Server Architecture
+The **Location MCP Server** demonstrates **Model Context Protocol** implementation:
+
+#### Spring AI MCP Integration
+- **`MethodToolCallbackProvider`** - Automatically exposes `@Tool` methods as MCP tools
+- **Standalone Server** - Runs independently to serve location tools to any MCP-compatible AI client
+- **Tool Registration** - Uses Spring's dependency injection to register `LocationService` tools
+
+#### Location Management Tools
+- **Multi-Location Support**: Pre-configured venues (Luminis, TechHub, CityView, Harbor, Villa, etc.)
+- **Room Capacity Management**: Intelligent room selection based on participant count
+- **Availability Integration**: Uses shared `Agenda` model for consistent booking logic
+- **Tool Annotations**: All tools use Spring AI's `@Tool` annotation for automatic discovery
+
+#### Sample Locations Available
+- **Luminis**: Business meeting rooms (4-12 capacity)
+- **TechHub**: Modern tech-focused spaces (5-15 capacity)
+- **CityView**: Panoramic city view rooms (7-20 capacity)
+- **Like Home**: Homely settings (5-10 capacity)
+- **Meet Nature**: Outdoor meeting spaces (6-14 capacity)
+- **GreenSpace**: Eco-friendly rooms (4-10 capacity)
+- **Harbor**: Waterfront meeting spaces (6-11 capacity)
+- **Library**: Quiet focused spaces (3-10 capacity)
+- **Loft**: Trendy loft-style rooms (5-13 capacity)
+- **Villa**: Luxurious exclusive settings (6-16 capacity)
+- **Campus**: Academic-style workshop rooms (7-18 capacity)
 
 ## Configuration
 
