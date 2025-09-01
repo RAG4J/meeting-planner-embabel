@@ -2,14 +2,17 @@ package org.rag4j.meetingplanner.webapp.controller;
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
+import org.rag4j.meetingplanner.agent.model.location.BookingResult;
 import org.rag4j.meetingplanner.agent.model.location.Location;
 import org.rag4j.meetingplanner.agent.model.location.LocationRequest;
+import org.rag4j.meetingplanner.agent.model.location.RoomRequest;
 import org.rag4j.meetingplanner.agent.model.meeting.MeetingResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -30,17 +33,15 @@ public class LocationController {
     }
 
     @PostMapping("/locations")
-    public String searchLocations(@RequestParam("description") String description, Model model) {
-        logger.info("Location search request received: {}", description);
+    public String searchLocations(@ModelAttribute RoomRequest roomRequest, String description, Model model) {
+        logger.info("Location search request received: {}", roomRequest);
 
-        var agentInvocation = AgentInvocation.create(agentPlatform, Location.class);
-        Location location = agentInvocation.invoke(new LocationRequest(description));
-        logger.info("Location found: {}", location);
-        model.addAttribute("location", location);
-
+        var agentInvocation = AgentInvocation.create(agentPlatform, BookingResult.class);
+        BookingResult bookingResult = agentInvocation.invoke(roomRequest);
         model.addAttribute("title", "Location Lookup");
         model.addAttribute("searchDescription", description);
-        model.addAttribute("success", "Location search request logged: " + description);
+        model.addAttribute("success", "Result of request: " + bookingResult.description());
+        model.addAttribute("bookingResult", bookingResult);
         
         return "locations";
     }

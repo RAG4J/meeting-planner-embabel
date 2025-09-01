@@ -33,14 +33,42 @@
                                 <div class="row g-3">
                                     <!-- Location Description Input -->
                                     <div class="col-md-12">
-                                        <label for="description" class="form-label">Location Description <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="description" name="description" 
-                                               th:value="${searchDescription}"
+                                        <label for="locationDescription" class="form-label">Location Description <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="locationDescription" name="locationDescription" 
                                                placeholder="Describe the type of location you're looking for..." 
                                                required>
                                         <div class="form-text">
                                             Enter a description of the location you need (e.g., "conference room for 10 people", "outdoor venue for team building", "restaurant near downtown")
                                         </div>
+                                    </div>
+
+                                    <!-- Number of Participants -->
+                                    <div class="col-md-6">
+                                        <label for="numberOfParticipants" class="form-label">Number of Participants <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="numberOfParticipants" name="numberOfParticipants" 
+                                               min="1" max="50" value="5" required>
+                                        <div class="form-text">How many people will attend the meeting?</div>
+                                    </div>
+
+                                    <!-- Date and Time -->
+                                    <div class="col-md-6">
+                                        <label for="date" class="form-label">Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="date" name="date" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="startTime" class="form-label">Start Time <span class="text-danger">*</span></label>
+                                        <input type="time" class="form-control" id="startTime" name="startTime" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="numberOfMinutes" class="form-label">Duration (minutes) <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="numberOfMinutes" name="numberOfMinutes" required>
+                                            <option value="15">15 minutes</option>
+                                            <option value="30" selected>30 minutes</option>
+                                            <option value="45">45 minutes</option>
+                                            <option value="60">1 hour</option>
+                                            <option value="90">1.5 hours</option>
+                                            <option value="120">2 hours</option>
+                                        </select>
                                     </div>
 
                                     <!-- AI Assistant Info -->
@@ -51,8 +79,7 @@
                                                     <i class="fas fa-robot me-2 text-primary"></i>Embabel AI Assistant
                                                 </h6>
                                                 <p class="card-text mb-0">
-                                                    Our AI will help you find the perfect location based on your description. 
-                                                    Be as specific as possible about your requirements.
+                                                    Our AI will analyze your requirements and find the best available location and room for your meeting.
                                                 </p>
                                             </div>
                                         </div>
@@ -61,8 +88,9 @@
                                     <!-- Action Buttons -->
                                     <div class="col-md-12">
                                         <div class="d-flex justify-content-end gap-2 mt-4">
+                                            <a href="/" class="btn btn-outline-secondary">Back to Home</a>
                                             <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-search me-2"></i>Find Locations
+                                                <i class="fas fa-search me-2"></i>Find Room
                                             </button>
                                         </div>
                                     </div>
@@ -71,29 +99,42 @@
                         </div>
                     </div>
 
-                    <!-- Search Results Placeholder (for future implementation) -->
-                    <div class="card mt-4" id="searchResults" th:if="${location}" style="display: block;">
-                        <div class="card-header bg-info text-white">
+                    <!-- Search Results -->
+                    <div class="card mt-4" id="searchResults" th:if="${bookingResult}" style="display: block;">
+                        <div class="card-header bg-success text-white">
                             <h6 class="mb-0">
-                                <i class="fas fa-map-marked-alt me-2"></i>Suggested location
+                                <i class="fas fa-check-circle me-2"></i>Booking Result
                             </h6>
                         </div>
                         <div class="card-body">
-                            <div class="alert alert-light">
-                                <div>
-                                    <span class="strong"><strong>Name:</strong></span>
-                                    <span th:text="${location.name()}">Location details will appear here after search.</span>
-                                </div>
-                                <div>
-                                    <span><strong>Description:</strong></span>
-                                    <span th:text="${location.description()}">Location details will appear here after search.</span>
-                                </div>
+                            <div class="alert alert-success">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <span th:text="${bookingResult.description()}">Booking result will appear here.</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script>
+            // Set default date to today
+            document.addEventListener('DOMContentLoaded', function() {
+                const dateInput = document.getElementById('date');
+                if (dateInput && !dateInput.value) {
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    dateInput.value = tomorrow.toISOString().split('T')[0];
+                }
+                
+                // Set default time if not set
+                const timeInput = document.getElementById('startTime');
+                if (timeInput && !timeInput.value) {
+                    timeInput.value = '10:00';
+                }
+            });
+        </script>
     </main>
 
     <footer th:replace="~{layout/base :: footer}"></footer>

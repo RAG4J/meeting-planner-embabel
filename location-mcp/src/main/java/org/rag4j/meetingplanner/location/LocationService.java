@@ -52,6 +52,7 @@ public class LocationService {
             response = new RoomAvailableResponse(request.locationId(), false, null, null, 0);
         }
 
+        logger.info("Response for check room availability {}", response);
         return response;
     }
 
@@ -60,6 +61,7 @@ public class LocationService {
             description = "Book a room at a specific location at a day and time."
     )
     public BookRoomResponse bookRoom(BookRoomRequest request) {
+        logger.info("Book a room {}", request);
         Map<String, Room> stringRoomMap = locationRooms.get(request.locationId());
         if (stringRoomMap == null) {
             return new BookRoomResponse(request.locationId(), request.roomId(), false, "You requested an unknown location");
@@ -78,7 +80,9 @@ public class LocationService {
                 request.startTime(),
                 request.startTime().plusMinutes(request.durationInMinutes()),
                 String.format("Reference %s - Description %s", request.reference(), request.description()));
-        return new BookRoomResponse(request.locationId(), request.roomId(), true, String.format("Booking confirmed for %s", request.reference()));
+        BookRoomResponse bookRoomResponse = new BookRoomResponse(request.locationId(), request.roomId(), true, String.format("Booking confirmed for %s", request.reference()));
+        logger.info("Booking confirmed for location {}", bookRoomResponse);
+        return bookRoomResponse;
     }
 
     private void initializeLocations() {
