@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.location;
+package org.rag4j.meetingplanner.location.model;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalTime;

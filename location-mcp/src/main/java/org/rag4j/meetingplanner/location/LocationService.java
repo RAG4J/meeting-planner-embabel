@@ -1,6 +1,7 @@
 package org.rag4j.meetingplanner.location;
 
 import org.rag4j.meetingplanner.common.model.Agenda;
+import org.rag4j.meetingplanner.location.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;

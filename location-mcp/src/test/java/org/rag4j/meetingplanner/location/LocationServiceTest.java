@@ -3,6 +3,7 @@ package org.rag4j.meetingplanner.location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rag4j.meetingplanner.location.model.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

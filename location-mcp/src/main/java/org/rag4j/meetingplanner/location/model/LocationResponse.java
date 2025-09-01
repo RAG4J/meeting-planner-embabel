@@ -1,4 +1,4 @@
-package org.rag4j.meetingplanner.location;
+package org.rag4j.meetingplanner.location.model;
 
 import java.util.List;
 
