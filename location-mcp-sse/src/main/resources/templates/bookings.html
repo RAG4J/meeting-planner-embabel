@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Bookings - Location MCP Server</title>
+    
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <header class="bg-primary text-white py-4 mb-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-0">
+                            <i class="bi bi-calendar3"></i> All Bookings
+                        </h1>
+                        <p class="mb-0 text-light">Overview of all meeting room bookings</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="d-flex gap-2 justify-content-end align-items-center">
+                            <a href="/" class="btn btn-light btn-sm">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                            <a href="/calendar" class="btn btn-light btn-sm">
+                                <i class="bi bi-calendar-month"></i> Monthly Calendar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Summary Stats -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">
+                                                <i class="bi bi-calendar-check"></i>
+                                            </h5>
+                                            <h3 class="mb-0" th:text="${totalBookings}">0</h3>
+                                            <small class="text-muted">Total Bookings</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-info">
+                                                <i class="bi bi-building"></i>
+                                            </h5>
+                                            <h3 class="mb-0" th:text="${bookingStats.locationBookingStats().size()}">0</h3>
+                                            <small class="text-muted">Active Locations</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-success">
+                                                <i class="bi bi-door-open"></i>
+                                            </h5>
+                                            <h3 class="mb-0" th:text="${bookingStats.totalRooms()}">0</h3>
+                                            <small class="text-muted">Total Rooms</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-warning">
+                                                <i class="bi bi-clock"></i>
+                                            </h5>
+                                            <h3 class="mb-0" th:text="${#temporals.format(#temporals.createNow(), 'HH:mm')}">--:--</h3>
+                                            <small class="text-muted">Current Time</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Statistics -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title mb-0">
+                                <i class="bi bi-bar-chart"></i> Bookings by Location
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div th:each="stat : ${bookingStats.locationBookingStats()}" class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card border-secondary">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="card-title mb-0" th:text="${stat.locationName}">Location</h6>
+                                                <span class="badge bg-primary" th:text="${stat.totalBookings}">0</span>
+                                            </div>
+                                            <p class="card-text small text-muted" th:text="${stat.roomCount + ' rooms'}">X rooms</p>
+                                            <div class="btn-group w-100" role="group">
+                                                <a th:href="@{'/location/' + ${stat.locationId} + '/bookings'}" 
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="bi bi-list-ul"></i> View
+                                                </a>
+                                                <a th:href="@{'/location/' + ${stat.locationId} + '/week'}" 
+                                                   class="btn btn-outline-info btn-sm">
+                                                    <i class="bi bi-calendar-week"></i> Week
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bookings -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title mb-0">
+                                <i class="bi bi-clock-history"></i> All Bookings
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${bookings != null and !bookings.isEmpty()}">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th><i class="bi bi-calendar-date"></i> Date</th>
+                                                <th><i class="bi bi-clock"></i> Time</th>
+                                                <th><i class="bi bi-building"></i> Location</th>
+                                                <th><i class="bi bi-door-open"></i> Room</th>
+                                                <th><i class="bi bi-card-text"></i> Title</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="booking : ${bookings}">
+                                                <td>
+                                                    <span th:text="${#temporals.format(booking.date, 'MMM dd, yyyy')}">Date</span>
+                                                    <br>
+                                                    <small class="text-muted" th:text="${#temporals.format(booking.date, 'EEEE')}">Day</small>
+                                                </td>
+                                                <td>
+                                                    <span th:text="${#temporals.format(booking.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(booking.endTime, 'HH:mm')}">Time Range</span>
+                                                    <br>
+                                                    <small class="text-muted" 
+                                                           th:text="${T(java.time.Duration).between(booking.startTime, booking.endTime).toMinutes()} + ' min'">Duration</small>
+                                                </td>
+                                                <td>
+                                                    <strong th:text="${booking.locationName}">Location</strong>
+                                                    <br>
+                                                    <small class="text-muted" th:text="${booking.locationId}">ID</small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary" th:text="${booking.roomId}">Room</span>
+                                                </td>
+                                                <td th:text="${booking.title}">Meeting Title</td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <a th:href="@{'/location/' + ${booking.locationId} + '/week'}" 
+                                                           class="btn btn-outline-info btn-sm">
+                                                            <i class="bi bi-calendar-week"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div th:if="${bookings == null or bookings.isEmpty()}" class="alert alert-info text-center">
+                                <i class="bi bi-calendar-x"></i>
+                                <h5>No bookings found</h5>
+                                <p class="mb-0">There are currently no meeting room bookings.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-light py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-0">&copy; 2024 Location MCP Server</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <small class="text-muted">Booking Management System</small>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -14,5 +14,16 @@ spring:
   main:
     banner-mode: console
     web-application-type: servlet
+  # Static resources configuration
+  web:
+    resources:
+      static-locations:
+        - classpath:/META-INF/resources/
+        - classpath:/resources/
+        - classpath:/static/
+        - classpath:/public/
+      add-mappings: true
+  mvc:
+    static-path-pattern: /**
 server:
   port: 8081

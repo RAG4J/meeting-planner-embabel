@@ -7,7 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class LocationService {
@@ -18,6 +22,7 @@ public class LocationService {
 
     public LocationService() {
         initializeLocations();
+        addSampleBookings();
     }
 
     @Tool(
@@ -182,5 +187,156 @@ public class LocationService {
         roomsCampus.put("hall", new Room("campus", "hall", 18, new Agenda()));
         roomsCampus.put("class", new Room("campus", "class", 7, new Agenda()));
         locationRooms.put("campus", roomsCampus);
+    }
+    
+    private void addSampleBookings() {
+        // Add some sample bookings for demonstration
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        LocalDate nextWeek = today.plusDays(7);
+        
+        // Luminis bookings
+        locationRooms.get("luminis").get("room-a").agenda()
+                .bookMeeting(today, LocalTime.of(9, 0), LocalTime.of(10, 30), "Team Stand-up Meeting");
+        locationRooms.get("luminis").get("room-b").agenda()
+                .bookMeeting(today, LocalTime.of(14, 0), LocalTime.of(16, 0), "Sprint Planning");
+        locationRooms.get("luminis").get("room-c").agenda()
+                .bookMeeting(tomorrow, LocalTime.of(10, 0), LocalTime.of(11, 30), "Client Presentation");
+                
+        // Like Home bookings
+        locationRooms.get("like-home").get("living").agenda()
+                .bookMeeting(today, LocalTime.of(11, 0), LocalTime.of(12, 0), "Casual Coffee Meeting");
+        locationRooms.get("like-home").get("kitchen").agenda()
+                .bookMeeting(nextWeek, LocalTime.of(13, 0), LocalTime.of(15, 0), "Team Lunch & Learn");
+                
+        // TechHub bookings
+        locationRooms.get("techhub").get("alpha").agenda()
+                .bookMeeting(today, LocalTime.of(15, 30), LocalTime.of(17, 0), "Code Review Session");
+        locationRooms.get("techhub").get("beta").agenda()
+                .bookMeeting(tomorrow, LocalTime.of(9, 30), LocalTime.of(11, 0), "Architecture Discussion");
+        locationRooms.get("techhub").get("gamma").agenda()
+                .bookMeeting(nextWeek, LocalTime.of(10, 0), LocalTime.of(12, 0), "All Hands Meeting");
+                
+        // CityView bookings
+        locationRooms.get("cityview").get("sky").agenda()
+                .bookMeeting(today, LocalTime.of(16, 0), LocalTime.of(17, 0), "Executive Briefing");
+        locationRooms.get("cityview").get("cloud").agenda()
+                .bookMeeting(tomorrow, LocalTime.of(14, 30), LocalTime.of(16, 30), "Strategy Workshop");
+                
+        // More bookings for better calendar view
+        locationRooms.get("greenspace").get("ivy").agenda()
+                .bookMeeting(today.plusDays(2), LocalTime.of(9, 0), LocalTime.of(10, 0), "Morning Sync");
+        locationRooms.get("harbor").get("dock").agenda()
+                .bookMeeting(today.plusDays(3), LocalTime.of(11, 0), LocalTime.of(12, 30), "Waterfront Meeting");
+        locationRooms.get("library").get("study").agenda()
+                .bookMeeting(today.plusDays(4), LocalTime.of(10, 0), LocalTime.of(11, 0), "Quiet Focus Session");
+        locationRooms.get("loft").get("brick").agenda()
+                .bookMeeting(today.plusDays(5), LocalTime.of(15, 0), LocalTime.of(16, 30), "Creative Brainstorm");
+        locationRooms.get("villa").get("salon").agenda()
+                .bookMeeting(today.plusDays(6), LocalTime.of(13, 0), LocalTime.of(15, 0), "VIP Client Meeting");
+        locationRooms.get("campus").get("lab").agenda()
+                .bookMeeting(nextWeek.plusDays(1), LocalTime.of(9, 30), LocalTime.of(11, 30), "Research Workshop");
+    }
+
+    // Non-tool methods for web UI functionality
+    
+    /**
+     * Get all bookings across all locations
+     */
+    public List<BookingInfo> getAllBookings() {
+        List<BookingInfo> allBookings = new ArrayList<>();
+        
+        for (Map.Entry<String, Location> locationEntry : locations.entrySet()) {
+            String locationId = locationEntry.getKey();
+            Location location = locationEntry.getValue();
+            Map<String, Room> rooms = locationRooms.get(locationId);
+            
+            for (Room room : rooms.values()) {
+                List<Agenda.AgendaItem> meetings = room.agenda().getMeetings();
+                for (Agenda.AgendaItem meeting : meetings) {
+                    allBookings.add(new BookingInfo(
+                            locationId,
+                            location.name(),
+                            room.roomId(),
+                            meeting.day(),
+                            meeting.start(),
+                            meeting.end(),
+                            meeting.title()
+                    ));
+                }
+            }
+        }
+        
+        return allBookings.stream()
+                .sorted((b1, b2) -> {
+                    int dateComparison = b1.date().compareTo(b2.date());
+                    if (dateComparison != 0) return dateComparison;
+                    return b1.startTime().compareTo(b2.startTime());
+                })
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get bookings for a specific location
+     */
+    public List<BookingInfo> getBookingsForLocation(String locationId) {
+        return getAllBookings().stream()
+                .filter(booking -> booking.locationId().equals(locationId))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get booking statistics for all locations
+     */
+    public List<LocationBookingStats> getLocationBookingStats() {
+        List<LocationBookingStats> stats = new ArrayList<>();
+        
+        for (Map.Entry<String, Location> locationEntry : locations.entrySet()) {
+            String locationId = locationEntry.getKey();
+            Location location = locationEntry.getValue();
+            Map<String, Room> rooms = locationRooms.get(locationId);
+            
+            int totalBookings = rooms.values().stream()
+                    .mapToInt(room -> room.agenda().getMeetings().size())
+                    .sum();
+            
+            stats.add(new LocationBookingStats(
+                    locationId,
+                    location.name(),
+                    location.description(),
+                    totalBookings,
+                    rooms.size()
+            ));
+        }
+        
+        return stats;
+    }
+    
+    /**
+     * Get bookings for a specific week (Monday to Sunday)
+     */
+    public List<BookingInfo> getBookingsForWeek(String locationId, LocalDate weekStart) {
+        LocalDate weekEnd = weekStart.plusDays(6);
+        return getBookingsForLocation(locationId).stream()
+                .filter(booking -> !booking.date().isBefore(weekStart) && !booking.date().isAfter(weekEnd))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get bookings for a specific month
+     */
+    public List<BookingInfo> getBookingsForMonth(YearMonth month) {
+        LocalDate monthStart = month.atDay(1);
+        LocalDate monthEnd = month.atEndOfMonth();
+        return getAllBookings().stream()
+                .filter(booking -> !booking.date().isBefore(monthStart) && !booking.date().isAfter(monthEnd))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get all rooms for a location
+     */
+    public Map<String, Room> getRoomsForLocation(String locationId) {
+        return locationRooms.getOrDefault(locationId, new HashMap<>());
     }
 }
