@@ -14,9 +14,14 @@ spring:
                 - --rm
                 - mcp/time
                 - --local-timezone=America/New_York
-            location:
-              command: java
-              args:
-                - -Dspring.ai.mcp.server.stdio=true
-                - -jar
-                - "${LOCATION_MCP_JAR:${user.dir}/location-mcp/target/location-mcp-1.0.0-SNAPSHOT.jar}"
+#            location:
+#              command: java
+#              args:
+#                - -jar
+#                - "${LOCATION_MCP_JAR:${user.dir}/location-mcp/target/location-mcp-1.0.0-SNAPSHOT.jar}"
+        sse:
+          connections:
+            server1:
+              url: http://localhost:8081
+              reconnect-delay: 5s
+              timeout: 30s

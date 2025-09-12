@@ -1,0 +1,18 @@
+spring:
+  ai:
+    mcp:
+      server:
+        name: location-mcp-sse
+        version: 1.0.0
+        type: SYNC
+        instructions: "This server provides meeting location suggestions based on user preferences and can book rooms at the location."
+        capabilities:
+          tool: true
+          resource: false
+          prompt: false
+          completion: false
+  main:
+    banner-mode: console
+    web-application-type: servlet
+server:
+  port: 8081

@@ -10,11 +10,11 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>location-mcp</artifactId>
+    <artifactId>location-mcp-sse</artifactId>
     <packaging>jar</packaging>
 
-    <name>Location MCP Server</name>
-    <description>MCP Server exposing tools for interacting with locations.</description>
+    <name>Location MCP Server SSE</name>
+    <description>MCP Server exposing tools for interacting with locations through SSE.</description>
 
     <dependencies>
         <!-- Internal dependencies -->
@@ -32,7 +32,7 @@
 
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-mcp-server</artifactId>
+            <artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
         </dependency>
 
         <!-- Test dependencies -->

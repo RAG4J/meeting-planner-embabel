@@ -26,14 +26,16 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>3.5.5</spring-boot.version>
         <spring-ai.version>1.0.1</spring-ai.version>
-        <embabel-agent.version>0.1.1</embabel-agent.version>
+        <embabel-agent.version>0.1.2</embabel-agent.version>
     </properties>
 
     <modules>
         <module>common</module>
         <module>agent</module>
         <module>web-app</module>
+        <module>location-model</module>
         <module>location-mcp</module>
+        <module>location-mcp-sse</module>
     </modules>
 
     <dependencyManagement>
@@ -44,9 +46,16 @@
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.rag4j.meeting</groupId>
                 <artifactId>agent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.rag4j.meeting</groupId>
+                <artifactId>location-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
