@@ -192,50 +192,65 @@ public class LocationService {
     private void addSampleBookings() {
         // Add some sample bookings for demonstration
         LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
         LocalDate tomorrow = today.plusDays(1);
+        LocalDate dayAfterTomorrow = today.plusDays(2);
         LocalDate nextWeek = today.plusDays(7);
         
-        // Luminis bookings
+        // Get Monday of current week for better weekly view
+        LocalDate currentMonday = today.with(java.time.DayOfWeek.MONDAY);
+        LocalDate currentTuesday = currentMonday.plusDays(1);
+        LocalDate currentWednesday = currentMonday.plusDays(2);
+        LocalDate currentThursday = currentMonday.plusDays(3);
+        LocalDate currentFriday = currentMonday.plusDays(4);
+        
+        // Current week bookings for better weekly calendar view
+        
+        // Monday bookings
         locationRooms.get("luminis").get("room-a").agenda()
-                .bookMeeting(today, LocalTime.of(9, 0), LocalTime.of(10, 30), "Team Stand-up Meeting");
-        locationRooms.get("luminis").get("room-b").agenda()
-                .bookMeeting(today, LocalTime.of(14, 0), LocalTime.of(16, 0), "Sprint Planning");
-        locationRooms.get("luminis").get("room-c").agenda()
-                .bookMeeting(tomorrow, LocalTime.of(10, 0), LocalTime.of(11, 30), "Client Presentation");
-                
-        // Like Home bookings
-        locationRooms.get("like-home").get("living").agenda()
-                .bookMeeting(today, LocalTime.of(11, 0), LocalTime.of(12, 0), "Casual Coffee Meeting");
-        locationRooms.get("like-home").get("kitchen").agenda()
-                .bookMeeting(nextWeek, LocalTime.of(13, 0), LocalTime.of(15, 0), "Team Lunch & Learn");
-                
-        // TechHub bookings
+                .bookMeeting(currentMonday, LocalTime.of(9, 0), LocalTime.of(10, 30), "Monday Team Stand-up");
         locationRooms.get("techhub").get("alpha").agenda()
-                .bookMeeting(today, LocalTime.of(15, 30), LocalTime.of(17, 0), "Code Review Session");
-        locationRooms.get("techhub").get("beta").agenda()
-                .bookMeeting(tomorrow, LocalTime.of(9, 30), LocalTime.of(11, 0), "Architecture Discussion");
-        locationRooms.get("techhub").get("gamma").agenda()
-                .bookMeeting(nextWeek, LocalTime.of(10, 0), LocalTime.of(12, 0), "All Hands Meeting");
+                .bookMeeting(currentMonday, LocalTime.of(14, 0), LocalTime.of(15, 30), "Code Review Monday");
                 
-        // CityView bookings
+        // Tuesday bookings  
+        locationRooms.get("luminis").get("room-b").agenda()
+                .bookMeeting(currentTuesday, LocalTime.of(10, 0), LocalTime.of(11, 30), "Sprint Planning");
+        locationRooms.get("like-home").get("living").agenda()
+                .bookMeeting(currentTuesday, LocalTime.of(15, 0), LocalTime.of(16, 0), "Casual Coffee Meeting");
+                
+        // Wednesday bookings
         locationRooms.get("cityview").get("sky").agenda()
-                .bookMeeting(today, LocalTime.of(16, 0), LocalTime.of(17, 0), "Executive Briefing");
-        locationRooms.get("cityview").get("cloud").agenda()
-                .bookMeeting(tomorrow, LocalTime.of(14, 30), LocalTime.of(16, 30), "Strategy Workshop");
-                
-        // More bookings for better calendar view
+                .bookMeeting(currentWednesday, LocalTime.of(9, 30), LocalTime.of(11, 0), "Midweek Strategy");
         locationRooms.get("greenspace").get("ivy").agenda()
-                .bookMeeting(today.plusDays(2), LocalTime.of(9, 0), LocalTime.of(10, 0), "Morning Sync");
+                .bookMeeting(currentWednesday, LocalTime.of(13, 0), LocalTime.of(14, 0), "Green Meeting");
+                
+        // Thursday bookings
+        locationRooms.get("techhub").get("beta").agenda()
+                .bookMeeting(currentThursday, LocalTime.of(11, 0), LocalTime.of(12, 30), "Architecture Discussion");
         locationRooms.get("harbor").get("dock").agenda()
-                .bookMeeting(today.plusDays(3), LocalTime.of(11, 0), LocalTime.of(12, 30), "Waterfront Meeting");
-        locationRooms.get("library").get("study").agenda()
-                .bookMeeting(today.plusDays(4), LocalTime.of(10, 0), LocalTime.of(11, 0), "Quiet Focus Session");
-        locationRooms.get("loft").get("brick").agenda()
-                .bookMeeting(today.plusDays(5), LocalTime.of(15, 0), LocalTime.of(16, 30), "Creative Brainstorm");
+                .bookMeeting(currentThursday, LocalTime.of(14, 30), LocalTime.of(16, 0), "Waterfront Meeting");
+                
+        // Friday bookings
+        locationRooms.get("luminis").get("room-c").agenda()
+                .bookMeeting(currentFriday, LocalTime.of(10, 0), LocalTime.of(11, 30), "Friday Client Presentation");
         locationRooms.get("villa").get("salon").agenda()
-                .bookMeeting(today.plusDays(6), LocalTime.of(13, 0), LocalTime.of(15, 0), "VIP Client Meeting");
+                .bookMeeting(currentFriday, LocalTime.of(15, 0), LocalTime.of(17, 0), "End of Week VIP Meeting");
+                
+        // Some bookings for today/yesterday/tomorrow for variety
+        locationRooms.get("cityview").get("cloud").agenda()
+                .bookMeeting(today, LocalTime.of(16, 0), LocalTime.of(17, 0), "Today's Executive Briefing");
+        locationRooms.get("library").get("study").agenda()
+                .bookMeeting(yesterday, LocalTime.of(10, 0), LocalTime.of(11, 0), "Yesterday's Focus Session");
+        locationRooms.get("loft").get("brick").agenda()
+                .bookMeeting(tomorrow, LocalTime.of(14, 0), LocalTime.of(15, 30), "Tomorrow's Brainstorm");
+                
+        // Next week bookings
         locationRooms.get("campus").get("lab").agenda()
-                .bookMeeting(nextWeek.plusDays(1), LocalTime.of(9, 30), LocalTime.of(11, 30), "Research Workshop");
+                .bookMeeting(nextWeek, LocalTime.of(9, 30), LocalTime.of(11, 30), "Next Week Research Workshop");
+        locationRooms.get("like-home").get("kitchen").agenda()
+                .bookMeeting(nextWeek.plusDays(1), LocalTime.of(13, 0), LocalTime.of(15, 0), "Team Lunch & Learn");
+        locationRooms.get("techhub").get("gamma").agenda()
+                .bookMeeting(nextWeek.plusDays(2), LocalTime.of(10, 0), LocalTime.of(12, 0), "All Hands Meeting");
     }
 
     // Non-tool methods for web UI functionality

@@ -11,9 +11,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.WeekFields;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -88,11 +86,11 @@ public class McpDocumentationController {
         LocalDate weekStart;
         if (date != null) {
             LocalDate requestedDate = LocalDate.parse(date);
-            WeekFields weekFields = WeekFields.of(Locale.getDefault());
-            weekStart = requestedDate.with(weekFields.dayOfWeek(), 1);
+            // Calculate Monday of the week containing the requested date
+            weekStart = requestedDate.with(java.time.DayOfWeek.MONDAY);
         } else {
-            WeekFields weekFields = WeekFields.of(Locale.getDefault());
-            weekStart = LocalDate.now().with(weekFields.dayOfWeek(), 1);
+            // Calculate Monday of the current week
+            weekStart = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
         }
         
         LocationResponse locationResponse = locationService.getAllLocations();

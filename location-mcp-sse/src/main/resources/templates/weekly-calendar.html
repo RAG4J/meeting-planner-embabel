@@ -22,6 +22,8 @@
                         <p class="mb-0 text-light">
                             <span th:text="${location.name}">Location</span> - 
                             <span th:text="${#temporals.format(weekStart, 'MMM dd')} + ' - ' + ${#temporals.format(weekEnd, 'MMM dd, yyyy')}">Week Range</span>
+                            <br>
+                            <small>Today is <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMM dd, yyyy')}">Current Date</span></small>
                         </p>
                     </div>
                     <div class="col-md-4 text-end">
