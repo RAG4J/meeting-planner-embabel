@@ -39,12 +39,10 @@ logging:
   level:
     com.embabel: INFO
     org.springframework.web: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    org.springframework.security.web: DEBUG
-    org.springframework.boot.autoconfigure.security: DEBUG
-    org.springframework.web.servlet: DEBUG
-    org.springframework.web.client: DEBUG
+    org.springframework.security: INFO
+    org.springframework.boot.autoconfigure.security: INFO
+    org.springframework.web.servlet: INFO
+    org.springframework.web.client: INFO
     org.rag4j.meetingplanner.webapp.SessionDebugFilter: INFO
     root: INFO
 
