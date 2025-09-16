@@ -46,7 +46,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/favicon.ico",
                                 "/error",
-                                "/actuator/health"
+                                "/actuator/health",
+                                "/oauth2/logout"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -67,7 +67,7 @@
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <form th:action="@{/logout}" method="post" class="d-inline">
+                        <form th:action="@{/oauth2/logout}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-outline-light">
                                 <i class="fas fa-sign-out-alt me-1"></i>Logout
                             </button>
