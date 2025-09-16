@@ -10,6 +10,10 @@ import org.rag4j.meetingplanner.agent.service.MeetingService;
 import org.rag4j.meetingplanner.agent.service.PersonFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,9 +42,31 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, Authentication authentication) {
         model.addAttribute("title", "Meeting Planner");
-        model.addAttribute("message", "Welcome to your Meeting Planner powered by Embabel!");
+        
+        // Add authentication info to model
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = "Unknown";
+            String email = "";
+            
+            if (authentication.getPrincipal() instanceof OidcUser oidcUser) {
+                username = oidcUser.getFullName() != null ? oidcUser.getFullName() : oidcUser.getGivenName();
+                email = oidcUser.getEmail();
+            } else if (authentication.getPrincipal() instanceof OAuth2User oauth2User) {
+                username = oauth2User.getAttribute("name");
+                email = oauth2User.getAttribute("email");
+            }
+            
+            model.addAttribute("authenticated", true);
+            model.addAttribute("username", username != null ? username : authentication.getName());
+            model.addAttribute("email", email);
+            model.addAttribute("message", "Welcome back, " + (username != null ? username : authentication.getName()) + "!");
+        } else {
+            model.addAttribute("authenticated", false);
+            model.addAttribute("message", "Welcome to your Meeting Planner! Please log in to continue.");
+        }
+        
         return "index";
     }
 
@@ -128,6 +154,19 @@ public class HomeController {
         model.addAttribute("agendaItems", agendaItems);
         model.addAttribute("availableSlots", availableSlots);
         return "person-agenda";
+    }
+    
+    /**
+     * Handle login errors from OAuth2 authentication.
+     */
+    @GetMapping("/login")
+    public String loginError(@RequestParam(value = "error", required = false) String error, Model model) {
+        if ("true".equals(error)) {
+            model.addAttribute("title", "Login Error");
+            return "login-error";
+        }
+        // If no error, redirect to OAuth2 login
+        return "redirect:/oauth2/authorization/meeting-planner";
     }
 
 }

@@ -1,0 +1,84 @@
+### OAuth2 Authorization Server Test Requests
+
+###
+# 1. Get OpenID Connect Discovery Document
+GET http://localhost:9000/.well-known/openid_configuration
+Accept: application/json
+
+###
+# 2. Get JWK Set (Public Keys for JWT verification)
+GET http://localhost:9000/oauth2/jwks
+Accept: application/json
+
+###
+# 3. Client Credentials Flow - Get Access Token for SSE Client
+POST http://localhost:9000/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVldGluZy1wbGFubmVyLXNzZTpzc2Utc2VjcmV0
+
+grant_type=client_credentials&scope=meeting.read meeting.events
+
+###
+# 4. Authorization Code Flow - Step 1: Get Authorization Code
+# NOTE: This will redirect to login page, then to redirect URI with code
+# Copy the 'code' parameter from the redirect URL to use in step 5
+GET http://localhost:9000/oauth2/authorize?response_type=code&client_id=meeting-planner-web&redirect_uri=http://localhost:8080/authorized&scope=openid profile meeting.read&state=xyz123
+
+###
+# 5. Authorization Code Flow - Step 2: Exchange Code for Token
+# Replace 'AUTHORIZATION_CODE_HERE' with actual code from step 4
+POST http://localhost:9000/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVldGluZy1wbGFubmVyLXdlYjp3ZWItc2VjcmV0
+
+grant_type=authorization_code&code=AUTHORIZATION_CODE_HERE&redirect_uri=http://localhost:8080/authorized
+
+###
+# 6. Token Introspection - Check if token is valid
+# Replace 'ACCESS_TOKEN_HERE' with actual access token
+POST http://localhost:9000/oauth2/introspect
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVldGluZy1wbGFubmVyLXdlYjp3ZWItc2VjcmV0
+
+token=ACCESS_TOKEN_HERE
+
+###
+# 7. Refresh Token Request
+# Replace 'REFRESH_TOKEN_HERE' with actual refresh token
+POST http://localhost:9000/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVldGluZy1wbGFubmVyLXdlYjp3ZWItc2VjcmV0
+
+grant_type=refresh_token&refresh_token=REFRESH_TOKEN_HERE
+
+###
+# 8. Token Revocation
+# Replace 'TOKEN_TO_REVOKE' with access or refresh token
+POST http://localhost:9000/oauth2/revoke
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVldGluZy1wbGFubmVyLXdlYjp3ZWItc2VjcmV0
+
+token=TOKEN_TO_REVOKE
+
+###
+# 9. User Info Endpoint (OIDC) - Get user profile
+# Replace 'ACCESS_TOKEN_HERE' with a valid access token with 'openid' scope
+GET http://localhost:9000/userinfo
+Authorization: Bearer ACCESS_TOKEN_HERE
+Accept: application/json
+
+###
+# 10. Health Check
+GET http://localhost:9001/actuator/health
+Accept: application/json
+
+###
+# Demo Users (for browser login):
+# Username: user,     Password: password
+# Username: admin,    Password: admin  
+# Username: planner,  Password: planner
+
+###
+# Client Credentials (Base64 encoded):
+# meeting-planner-web:web-secret     -> bWVldGluZy1wbGFubmVyLXdlYjp3ZWItc2VjcmV0
+# meeting-planner-sse:sse-secret     -> bWVldGluZy1wbGFubmVyLXNzZTpzc2Utc2VjcmV0

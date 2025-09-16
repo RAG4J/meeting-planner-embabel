@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Login Error')}"><title>is replaced</title></head>
+<body>
+    <nav th:replace="~{layout/base :: nav}"></nav>
+
+    <main class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h2><i class="fas fa-exclamation-triangle me-2"></i>Login Error</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger">
+                            <h4>❌ Authentication Failed</h4>
+                            <p>There was an error during the OAuth2 login process. This could be due to:</p>
+                            <ul>
+                                <li>Invalid credentials</li>
+                                <li>Session timeout</li>
+                                <li>Authorization server issues</li>
+                                <li>Network connectivity problems</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5>What to do next:</h5>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="/" class="btn btn-primary">
+                                    <i class="fas fa-home me-2"></i>Go Home
+                                </a>
+                                <a href="/oauth2/authorization/meeting-planner" class="btn btn-success">
+                                    <i class="fas fa-redo me-2"></i>Try Login Again
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+    <div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>

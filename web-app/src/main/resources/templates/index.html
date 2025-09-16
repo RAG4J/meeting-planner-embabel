@@ -11,13 +11,42 @@
             <div class="container">
                 <h1 class="display-4 fw-bold mb-4" th:text="${message}">Welcome to Meeting Planner!</h1>
                 <p class="lead mb-4">Organize, plan, and manage your meetings with AI-powered assistance</p>
-                <div class="d-flex justify-content-center gap-3">
+                
+                <!-- Authentication Status -->
+                <div th:if="${authenticated}" class="mb-4">
+                    <div class="alert alert-success d-inline-block">
+                        <i class="fas fa-user-check me-2"></i>
+                        <strong>Welcome, <span th:text="${username}">User</span>!</strong>
+                        <span th:if="${email}" class="ms-2 text-muted">(<span th:text="${email}">email</span>)</span>
+                    </div>
+                </div>
+                
+                <div th:unless="${authenticated}" class="mb-4">
+                    <div class="alert alert-warning d-inline-block">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Please log in to access all features</strong>
+                    </div>
+                    <div class="mt-3">
+                        <a href="/oauth2/authorization/meeting-planner" class="btn btn-success btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login with OAuth2
+                        </a>
+                    </div>
+                </div>
+                
+                <div th:if="${authenticated}" class="d-flex justify-content-center gap-3">
                     <a href="/create-meeting" class="btn btn-light btn-lg">
                         <i class="fas fa-plus me-2"></i>Create Meeting
                     </a>
                     <a href="/meetings" class="btn btn-outline-light btn-lg">
                         <i class="fas fa-list me-2"></i>View Meetings
                     </a>
+                    <a href="/logout" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+                
+                <div th:unless="${authenticated}" class="d-flex justify-content-center gap-3">
+                    <p class="text-muted">Log in to create and manage meetings</p>
                 </div>
             </div>
         </section>

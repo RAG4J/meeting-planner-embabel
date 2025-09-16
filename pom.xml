@@ -33,6 +33,7 @@
         <module>common</module>
         <module>agent</module>
         <module>web-app</module>
+        <module>auth-server</module>
         <module>location-model</module>
         <module>location-mcp</module>
         <module>location-mcp-sse</module>

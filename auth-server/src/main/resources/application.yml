@@ -1,0 +1,39 @@
+server:
+  port: 9000  # Auth server runs on port 9000
+
+spring:
+  application:
+    name: meeting-planner-auth-server
+
+  # OAuth2 configuration is handled by Java @Configuration classes
+
+# Logging configuration
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot.autoconfigure: INFO
+    com.meetingplanner.auth: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management endpoints (for health checks and monitoring)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+# Demo configuration
+demo:
+  users:
+    - username: user
+      password: password
+      roles: [ USER ]
+    - username: admin
+      password: admin
+      roles: [ USER, ADMIN ]
+    - username: planner
+      password: planner
+      roles: [ USER, MEETING_PLANNER ]

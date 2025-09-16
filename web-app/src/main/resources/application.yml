@@ -1,6 +1,12 @@
 server:
   port: 8080
-  
+  servlet:
+    session:
+      cookie:
+        same-site: lax
+        secure: false  # Set to true in production with HTTPS
+        http-only: true
+
 spring:
   application:
     name: meeting-planner-web-app
@@ -11,12 +17,24 @@ spring:
     cache: false
     prefix: classpath:/templates/
     suffix: .html
-    
-  devtools:
-    restart:
-      enabled: true
-    livereload:
-      enabled: true
+
+  # OAuth2 Security Configuration
+  security:
+    oauth2:
+      client:
+        registration:
+          meeting-planner:
+            client-id: meeting-planner-web
+            client-secret: web-secret
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/login/oauth2/code/meeting-planner"
+            scope: [openid, profile, email, meeting.read, meeting.write]
+            client-name: "Meeting Planner Web App"
+        provider:
+          meeting-planner:
+            issuer-uri: http://auth-server:9000
+            user-name-attribute: sub
 
 # Embabel Agent Configuration
 embabel:
@@ -27,3 +45,12 @@ logging:
   level:
     com.embabel: INFO
     org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.oauth2.client: TRACE
+    org.springframework.security.web: DEBUG
+    org.springframework.boot.autoconfigure.security: DEBUG
+    org.springframework.web.servlet: DEBUG
+    org.springframework.web.client: DEBUG
+    org.rag4j.meetingplanner.webapp.SessionDebugFilter: INFO
+    root: INFO
