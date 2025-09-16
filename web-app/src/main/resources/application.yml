@@ -24,23 +24,35 @@ spring:
       client:
         registration:
           meeting-planner:
+            provider: meeting-planner
             client-id: meeting-planner-web
             client-secret: web-secret
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
             redirect-uri: "http://localhost:8080/login/oauth2/code/meeting-planner"
-            scope: [openid, profile, email, meeting.read, meeting.write]
+            scope: [ openid, profile, email, meeting.read, meeting.write ]
             client-name: "Meeting Planner Web App"
+          location-mcp:
+            provider: auth-server
+            client-id: location-mcp
+            client-secret: mcp-secret
+#            client-authentication-method: client_secret_basic
+            authorization-grant-type: client_credentials
+            scope: [ mcp.invoke ]
+            client-name: "Location MCP Client"
         provider:
           meeting-planner:
             issuer-uri: http://auth-server:9000
+            user-name-attribute: sub
+          auth-server:
+            token-uri: http://auth-server:9000/oauth2/token
             user-name-attribute: sub
 
 # Embabel Agent Configuration
 embabel:
   agent:
     timeout: 30s
-    
+
 logging:
   level:
     com.embabel: INFO

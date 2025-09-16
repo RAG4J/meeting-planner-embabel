@@ -38,6 +38,98 @@ print_result() {
     fi
 }
 
+# Function to decode JWT token
+decode_jwt() {
+    local token=$1
+    
+    if [ -z "$token" ]; then
+        echo "No token provided for decoding"
+        return 1
+    fi
+    
+    # Split the JWT into parts (header.payload.signature)
+    local header=$(echo "$token" | cut -d'.' -f1)
+    local payload=$(echo "$token" | cut -d'.' -f2)
+    local signature=$(echo "$token" | cut -d'.' -f3)
+    
+    echo "🔍 JWT Token Analysis"
+    echo "═══════════════════="
+    echo "Token Length: ${#token} characters"
+    echo "Parts: Header.Payload.Signature"
+    echo ""
+    
+    # Decode header (add padding if needed)
+    echo "📋 Header:"
+    local header_padded=$(pad_base64 "$header")
+    if command -v python3 >/dev/null 2>&1; then
+        echo "$header_padded" | base64 -d 2>/dev/null | python3 -m json.tool 2>/dev/null || echo "Failed to decode header"
+    else
+        echo "$header_padded" | base64 -d 2>/dev/null || echo "Failed to decode header"
+    fi
+    echo ""
+    
+    # Decode payload (add padding if needed)
+    echo "📦 Payload (Claims):"
+    local payload_padded=$(pad_base64 "$payload")
+    if command -v python3 >/dev/null 2>&1; then
+        echo "$payload_padded" | base64 -d 2>/dev/null | python3 -m json.tool 2>/dev/null || echo "Failed to decode payload"
+    else
+        echo "$payload_padded" | base64 -d 2>/dev/null || echo "Failed to decode payload"
+    fi
+    echo ""
+    
+    echo "🔐 Signature: $signature (length: ${#signature})"
+    echo "Note: Signature cannot be decoded as it's a cryptographic hash"
+    echo ""
+    
+    # Extract common claims for easy reading
+    echo "📊 Key Claims Summary:"
+    local payload_json=$(echo "$payload_padded" | base64 -d 2>/dev/null)
+    
+    if command -v python3 >/dev/null 2>&1 && [ -n "$payload_json" ]; then
+        echo "$payload_json" | python3 -c "
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    print(f'  Subject (sub): {data.get(\"sub\", \"N/A\")}')
+    print(f'  Audience (aud): {data.get(\"aud\", \"N/A\")}')
+    print(f'  Issuer (iss): {data.get(\"iss\", \"N/A\")}')
+    print(f'  Client ID: {data.get(\"client_id\", \"N/A\")}')
+    print(f'  Scope: {data.get(\"scope\", \"N/A\")}')
+    
+    # Handle expiration time
+    exp = data.get('exp')
+    if exp:
+        import datetime
+        exp_date = datetime.datetime.fromtimestamp(exp)
+        print(f'  Expires (exp): {exp} ({exp_date})')
+    else:
+        print('  Expires (exp): N/A')
+    
+    # Handle issued at time
+    iat = data.get('iat')
+    if iat:
+        import datetime
+        iat_date = datetime.datetime.fromtimestamp(iat)
+        print(f'  Issued At (iat): {iat} ({iat_date})')
+    else:
+        print('  Issued At (iat): N/A')
+except:
+    print('  Could not parse claims')
+" 2>/dev/null || echo "  Could not extract claims summary"
+    fi
+}
+
+# Function to add padding to base64 string
+pad_base64() {
+    local str=$1
+    local missing=$((4 - ${#str} % 4))
+    if [ $missing -ne 4 ]; then
+        str="$str$(printf '%*s' $missing | tr ' ' '=')"
+    fi
+    echo "$str"
+}
+
 # Function to check if a service is running
 check_service() {
     local name=$1
@@ -90,6 +182,12 @@ test_oauth2_flow() {
             print_result "INFO" "Token Type: $token_type" >&2
             print_result "INFO" "Expires In: $expires_in seconds" >&2
             print_result "INFO" "Scope: $scope_returned" >&2
+            
+            # Decode and display JWT token contents
+            echo "" >&2
+            echo "=== JWT Token Analysis ===" >&2
+            decode_jwt "$access_token" >&2
+            echo "" >&2
             
             # Return ONLY the token to stdout for capture
             echo "$access_token"
@@ -315,6 +413,71 @@ main() {
         echo "       Terminal 2: cd location-mcp-sse && mvn spring-boot:run"
     fi
 }
+
+# Function to display help
+show_help() {
+    echo "Usage: $0 [OPTIONS] [JWT_TOKEN]"
+    echo ""
+    echo "OPTIONS:"
+    echo "  --help, -h     Show this help message"
+    echo "  --decode-jwt   Decode a JWT token (provide token as argument)"
+    echo "  --test-token   Get a new OAuth2 token and decode it"
+    echo ""
+    echo "EXAMPLES:"
+    echo "  $0                           # Run full OAuth2 and MCP tests"
+    echo "  $0 --decode-jwt <token>      # Decode a specific JWT token"
+    echo "  $0 --test-token              # Get and decode a fresh OAuth2 token"
+    echo ""
+}
+
+# Parse command line arguments
+case "${1:-}" in
+    --help|-h)
+        show_help
+        exit 0
+        ;;
+    --decode-jwt)
+        if [ -n "${2:-}" ]; then
+            decode_jwt "$2"
+        else
+            echo "Error: Please provide a JWT token to decode"
+            echo "Usage: $0 --decode-jwt <token>"
+            exit 1
+        fi
+        exit 0
+        ;;
+    --test-token)
+        echo "🔑 Getting fresh OAuth2 token for analysis..."
+        echo ""
+        
+        # Get token using the OAuth2 flow
+        CREDENTIALS_B64=$(echo -n "$CLIENT_ID:$CLIENT_SECRET" | base64)
+        RESPONSE=$(curl -s -w "HTTP_CODE:%{http_code}" \
+            -X POST \
+            -H "Authorization: Basic $CREDENTIALS_B64" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials&scope=$SCOPE" \
+            "$AUTH_SERVER_URL/oauth2/token" 2>/dev/null)
+        
+        HTTP_CODE=$(echo "$RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+        BODY=$(echo "$RESPONSE" | sed 's/HTTP_CODE:[0-9]*$//')
+        
+        if [ "$HTTP_CODE" = "200" ]; then
+            TOKEN=$(echo "$BODY" | grep -o '"access_token":"[^"]*' | cut -d'"' -f4)
+            if [ -n "$TOKEN" ]; then
+                decode_jwt "$TOKEN"
+            else
+                echo "Error: Could not extract token from response"
+                exit 1
+            fi
+        else
+            echo "Error: Failed to get OAuth2 token (HTTP $HTTP_CODE)"
+            echo "Response: $BODY"
+            exit 1
+        fi
+        exit 0
+        ;;
+esac
 
 # Run the main function
 main "$@"
