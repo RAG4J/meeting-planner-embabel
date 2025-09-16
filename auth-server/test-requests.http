@@ -2,21 +2,36 @@
 
 ###
 # 1. Get OpenID Connect Discovery Document
-GET http://localhost:9000/.well-known/openid_configuration
+GET http://auth-server:9000/.well-known/openid-configuration
 Accept: application/json
 
 ###
 # 2. Get JWK Set (Public Keys for JWT verification)
-GET http://localhost:9000/oauth2/jwks
+GET http://auth-server:9000/oauth2/jwks
 Accept: application/json
 
 ###
 # 3. Client Credentials Flow - Get Access Token for SSE Client
-POST http://localhost:9000/oauth2/token
+POST http://auth-server:9000/oauth2/token
 Content-Type: application/x-www-form-urlencoded
 Authorization: Basic bWVldGluZy1wbGFubmVyLXNzZTpzc2Utc2VjcmV0
 
 grant_type=client_credentials&scope=meeting.read meeting.events
+
+###
+
+# curl -XPOST http://localhost:8080/oauth2/token
+#     --data grant_type=client_credentials
+#     --user mcp-client:secret
+POST http://auth-server:9000/oauth2/token
+Authorization: Basic mcp-client secret
+Content-Type: application/x-www-form-urlencoded
+
+grant_type = client_credentials
+
+###
+
+
 
 ###
 # 4. Authorization Code Flow - Step 1: Get Authorization Code

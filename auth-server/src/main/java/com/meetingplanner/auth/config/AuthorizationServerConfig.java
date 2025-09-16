@@ -50,10 +50,11 @@ import java.util.UUID;
  * OAuth2 Authorization Server Configuration for Meeting Planner Application.
  * <p>
  * This configuration sets up:
- * - OAuth2 clients for web-app and sse components
+ * - OAuth2 clients for web-app and MCP server components
  * - Demo users for testing
  * - JWT token configuration
  * - Security filter chains
+ * - Server-to-server authentication for MCP communication
  */
 @Configuration
 @EnableWebSecurity
@@ -160,7 +161,22 @@ public class AuthorizationServerConfig {
                         .build())
                 .build();
 
-        return new InMemoryRegisteredClientRepository(webAppClient);
+        // Location MCP Client - Client Credentials Flow (Server-to-Server)
+        RegisteredClient locationMcpClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("location-mcp")
+                .clientSecret(passwordEncoder.encode("mcp-secret"))
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .scope("mcp.invoke")
+                .clientSettings(ClientSettings.builder()
+                        .requireAuthorizationConsent(false) // No consent required for server-to-server
+                        .build())
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenTimeToLive(Duration.ofHours(1)) // Server-to-server tokens can be shorter
+                        .build())
+                .build();
+
+        return new InMemoryRegisteredClientRepository(webAppClient, locationMcpClient);
     }
 
     /**

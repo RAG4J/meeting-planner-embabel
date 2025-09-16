@@ -25,5 +25,26 @@ spring:
       add-mappings: true
   mvc:
     static-path-pattern: /**
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-server:9000
+
 server:
   port: 8081
+
+logging:
+  level:
+    com.embabel: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.web: DEBUG
+    org.springframework.boot.autoconfigure.security: DEBUG
+    org.springframework.web.servlet: DEBUG
+    org.springframework.web.client: DEBUG
+    org.rag4j.meetingplanner.webapp.SessionDebugFilter: INFO
+    root: INFO
+
