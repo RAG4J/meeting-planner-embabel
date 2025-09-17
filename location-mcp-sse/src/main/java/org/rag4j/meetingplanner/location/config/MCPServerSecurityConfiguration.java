@@ -11,8 +11,30 @@ import org.springframework.security.web.SecurityFilterChain;
 public class MCPServerSecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-//                .oauth2ResourceServer(Customizer.withDefaults())
+        return http
+                // Configure authorization rules
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(
+                                "/",
+                                "/public/**",
+                                "/static/**",
+                                "/webjars/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/favicon.ico",
+                                "/error",
+                                "/actuator/health",
+                                "/docs",
+                                "/location/*",
+                                "/locations",
+                                "/bookings",
+                                "/calendar"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer((resourceServer) -> resourceServer
+                        .jwt(Customizer.withDefaults()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }

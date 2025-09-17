@@ -217,18 +217,20 @@ test_mcp_authentication() {
     
     local response=$(curl -s -w "HTTP_CODE:%{http_code}" \
         -H "Authorization: Bearer $token" \
-        "$MCP_SERVER_URL" 2>/dev/null)
+        "$MCP_SERVER_URL/mcp/test" 2>/dev/null)
     
     local http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+    local body=$(echo "$response" | sed 's/HTTP_CODE:[0-9]*$//')
     
     if [ "$http_code" = "200" ]; then
         print_result "PASS" "MCP server authentication successful (HTTP $http_code)"
         
         # Check if response contains expected content
-        if echo "$response" | grep -q "Location MCP Server"; then
-            print_result "PASS" "MCP server returned expected content"
+        if echo "$body" | grep -q "authenticated"; then
+            print_result "PASS" "MCP server returned expected authentication response"
+            print_result "INFO" "Response: $body"
         else
-            print_result "WARN" "MCP server response may be unexpected"
+            print_result "WARN" "MCP server response may be unexpected: $body"
         fi
         return 0
     elif [ "$http_code" = "401" ]; then
@@ -244,7 +246,7 @@ test_mcp_authentication() {
 test_mcp_no_auth() {
     print_result "INFO" "Testing MCP server without authentication (should fail)..."
     
-    local response=$(curl -s -w "HTTP_CODE:%{http_code}" "$MCP_SERVER_URL" 2>/dev/null)
+    local response=$(curl -s -w "HTTP_CODE:%{http_code}" "$MCP_SERVER_URL/mcp/test" 2>/dev/null)
     local http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
     
     if [ "$http_code" = "401" ]; then

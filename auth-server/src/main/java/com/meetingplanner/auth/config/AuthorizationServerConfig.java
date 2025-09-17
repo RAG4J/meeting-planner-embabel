@@ -34,10 +34,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
-import org.springframework.security.oauth2.server.authorization.authentication.OAuth2TokenExchangeAuthenticationToken;
-import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -67,11 +63,11 @@ public class AuthorizationServerConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
         http
-                .getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(Customizer.withDefaults());
+                .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+                .with(authorizationServerConfigurer, (authorizationServer) -> authorizationServer
+                        .oidc(Customizer.withDefaults()));
 
         http
                 // Redirect to the login page when not authenticated from the
@@ -81,10 +77,7 @@ public class AuthorizationServerConfig {
                                 new LoginUrlAuthenticationEntryPoint("/login"),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
-                )
-                // Accept access tokens for User Info and/or Client Registration
-                .oauth2ResourceServer((resourceServer) -> resourceServer
-                        .jwt(Customizer.withDefaults()));
+                );
 
         return http.build();
     }
