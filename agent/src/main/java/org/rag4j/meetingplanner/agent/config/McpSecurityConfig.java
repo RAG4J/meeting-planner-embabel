@@ -20,9 +20,6 @@ import java.util.Map;
 /**
  * Configuration for MCP SSE client with OAuth2 security.
  *
- *
- *
- * https://www.youtube.com/watch?v=nUvJjMjEDyE
  * @author Alexey Lavrenchenko
  */
 @Configuration
@@ -34,10 +31,10 @@ public class McpSecurityConfig {
                                                                  ObjectProvider<WebClient.Builder> webClientBuilderProvider,
                                                                  ObjectProvider<ObjectMapper> objectMapperProvider,
                                                                  OAuth2AuthorizedClientManager authorizedClientManager) {
-        List<NamedClientMcpTransport> sseTransports = new ArrayList();
+        List<NamedClientMcpTransport> sseTransports = new ArrayList<>();
         WebClient.Builder webClientBuilderTemplate =
-                (WebClient.Builder) webClientBuilderProvider.getIfAvailable(WebClient::builder);
-        ObjectMapper objectMapper = (ObjectMapper) objectMapperProvider.getIfAvailable(ObjectMapper::new);
+                webClientBuilderProvider.getIfAvailable(WebClient::builder);
+        ObjectMapper objectMapper = objectMapperProvider.getIfAvailable(ObjectMapper::new);
 
         for (Map.Entry<String, McpSseClientProperties.SseParameters> serverParameters :
                 sseProperties.getConnections().entrySet()) {
@@ -46,13 +43,13 @@ public class McpSecurityConfig {
             oauth2Client.setDefaultClientRegistrationId("location-mcp");
 
             WebClient.Builder webClientBuilder =
-                    webClientBuilderTemplate.clone().baseUrl(((McpSseClientProperties.SseParameters) serverParameters.getValue()).url());
+                    webClientBuilderTemplate.clone().baseUrl(serverParameters.getValue().url());
             String sseEndpoint =
-                    ((McpSseClientProperties.SseParameters) serverParameters.getValue()).sseEndpoint() != null ?
-                            ((McpSseClientProperties.SseParameters) serverParameters.getValue()).sseEndpoint() : "/sse";
+                    serverParameters.getValue().sseEndpoint() != null ?
+                            serverParameters.getValue().sseEndpoint() : "/sse";
             WebFluxSseClientTransport transport =
                     WebFluxSseClientTransport.builder(webClientBuilder.apply(oauth2Client.oauth2Configuration())).sseEndpoint(sseEndpoint).objectMapper(objectMapper).build();
-            sseTransports.add(new NamedClientMcpTransport((String) serverParameters.getKey(), transport));
+            sseTransports.add(new NamedClientMcpTransport(serverParameters.getKey(), transport));
         }
 
         return sseTransports;

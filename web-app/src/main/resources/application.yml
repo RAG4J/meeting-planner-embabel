@@ -1,5 +1,8 @@
 server:
   port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
   servlet:
     session:
       cookie:
@@ -56,7 +59,9 @@ embabel:
 logging:
   level:
     com.embabel: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO
     org.rag4j.meetingplanner.webapp.SessionDebugFilter: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    org.springframework.security.oauth2.client: INFO
+    org.springframework.security.oauth2.core: INFO
     root: INFO

@@ -26,7 +26,7 @@ public class MCPServerSecurityConfiguration {
                                 "/error",
                                 "/actuator/health",
                                 "/docs",
-                                "/location/*",
+                                "/location/**",
                                 "/locations",
                                 "/bookings",
                                 "/calendar"
