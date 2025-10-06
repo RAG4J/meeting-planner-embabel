@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favourites - Authorization</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="d-flex align-items-center justify-content-center py-4">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-lg border-0 rounded-3">
+                    <div class="card-body p-4">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h2 class="h3 fw-bold text-dark">
+                                <i class="fas fa-shield-alt me-2 text-primary"></i>
+                                Authorization Request
+                            </h2>
+                            <p class="text-muted small">Review the permissions being requested</p>
+                        </div>
+
+                        <!-- User info -->
+                        <div class="alert alert-light text-center mb-4">
+                            <i class="fas fa-user-circle me-2"></i>
+                            Signed in as <strong th:text="${principalName}">user</strong>
+                        </div>
+
+                        <!-- Client information -->
+                        <div class="alert alert-info border-start border-primary border-4 mb-4">
+                            <h5 class="alert-heading mb-2">
+                                <i class="fas fa-desktop me-2"></i>
+                                <span th:text="${clientId}">Application Name</span>
+                            </h5>
+                            <p class="mb-0 small">This application is requesting permission to access your account with the following permissions:</p>
+                        </div>
+
+                        <!-- Permissions section -->
+                        <div class="mb-4">
+                            <h5 class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-list-check me-2 text-success"></i>
+                                Requested Permissions
+                            </h5>
+                            
+                            <!-- Individual scope permissions -->
+                            <div th:each="scope : ${scopes}" class="card mb-2 border-start border-success border-3">
+                                <div class="card-body p-3 d-flex">
+                                    <div class="me-3 text-success">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-semibold" th:text="${scope.scope}">Permission Name</h6>
+                                        <p class="mb-0 text-muted small" th:text="${scope.description}">Permission description</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Consent form -->
+                        <form method="post" th:action="@{/oauth2/authorize}">
+                            <!-- Required by Spring Authorization Server: client_id, state, and approved scopes -->
+                            <input type="hidden" name="client_id" th:value="${clientId}">
+                            <input type="hidden" name="state" th:value="${state}">
+
+                            <!-- Optional: only include if present to avoid blank overrides -->
+                            <input type="hidden" name="redirect_uri" th:if="${redirectUri} != null" th:value="${redirectUri}">
+                            <input type="hidden" name="code_challenge" th:if="${code_challenge} != null" th:value="${code_challenge}">
+                            <input type="hidden" name="code_challenge_method" th:if="${code_challenge_method} != null" th:value="${code_challenge_method}">
+
+                            <!-- Include CSRF token -->
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                            <!-- Include approved scopes as individual hidden inputs -->
+                            <input th:each="scopeItem : ${scopes}"
+                                   type="hidden"
+                                   name="scope"
+                                   th:value="${scopeItem.scope}">
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                <button type="submit" name="user_oauth_approval" value="true" 
+                                        class="btn btn-success btn-lg px-4 flex-fill">
+                                    <i class="fas fa-check me-2"></i>Approve
+                                </button>
+
+                                <button type="submit" name="user_oauth_approval" value="false" 
+                                        class="btn btn-danger btn-lg px-4 flex-fill">
+                                    <i class="fas fa-times me-2"></i>Deny
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Security notice -->
+                        <div class="alert alert-warning mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small>
+                                You can revoke these permissions at any time from your account settings. 
+                                Only approve applications you trust.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</body>
+</html>

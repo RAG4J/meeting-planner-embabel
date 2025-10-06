@@ -5,11 +5,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -26,25 +21,22 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.oidc.OidcProviderConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -74,10 +66,18 @@ public class AuthorizationServerConfig {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
                 OAuth2AuthorizationServerConfigurer.authorizationServer();
 
+        // Configure custom consent page
+        authorizationServerConfigurer.authorizationEndpoint(authorizationEndpoint ->
+                authorizationEndpoint.consentPage("/oauth2/consent"));
+
         http
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
                 .with(authorizationServerConfigurer, authorizationServer ->
-                        authorizationServer.oidc(Customizer.withDefaults()) // enable openid connect
+                        authorizationServer.oidc(oidc -> oidc
+                                .providerConfigurationEndpoint(providerConfiguration ->
+                                        providerConfiguration.providerConfigurationCustomizer(this::customizeProviderConfiguration)
+                                )
+                        )
                 )
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated());
 
@@ -151,7 +151,7 @@ public class AuthorizationServerConfig {
                 .scope("meeting.read")
                 .scope("meeting.write")
                 .clientSettings(ClientSettings.builder()
-                        .requireAuthorizationConsent(false) // Skip consent for demo
+                        .requireAuthorizationConsent(true)
                         .build())
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofHours(1))
@@ -221,6 +221,30 @@ public class AuthorizationServerConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    /**
+     * OAuth2 authorization consent service for managing user consent.
+     */
+    @Bean
+    public OAuth2AuthorizationConsentService authorizationConsentService() {
+        // In production, you'd use a database-backed implementation
+        return new InMemoryOAuth2AuthorizationConsentService();
+    }
+
+
+    /**
+     * Customize OIDC provider configuration to include custom scopes.
+     */
+    private void customizeProviderConfiguration(OidcProviderConfiguration.Builder builder) {
+        builder.scopes(scopes -> {
+            scopes.add(OidcScopes.OPENID);
+            scopes.add(OidcScopes.PROFILE);
+            scopes.add(OidcScopes.EMAIL);
+            scopes.add("meeting.read");
+            scopes.add("meeting.write");
+        });
+    }
+
 
     /**
      * Generate RSA key pair for JWT signing.

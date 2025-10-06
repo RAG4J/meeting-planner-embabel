@@ -9,11 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class App {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+public class LocationMcpSseApp {
+    private static final Logger logger = LoggerFactory.getLogger(LocationMcpSseApp.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(LocationMcpSseApp.class, args);
     }
 
     @Bean

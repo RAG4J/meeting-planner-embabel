@@ -11,7 +11,7 @@ import java.util.*;
 
 @Service
 public class LocationService {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationService.class);
 
     private final Map<String, Location> locations = new HashMap<>();
     private final Map<String, Map<String, Room>> locationRooms = new HashMap<>();
