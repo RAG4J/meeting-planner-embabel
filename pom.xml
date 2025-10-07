@@ -78,6 +78,14 @@
                 <scope>import</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.embabel.agent</groupId>
+                <artifactId>embabel-agent-dependencies</artifactId>
+                <version>${embabel-agent.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- For vulnerabilities -->
             <dependency>
                 <groupId>org.apache.commons</groupId>

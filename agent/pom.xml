@@ -44,19 +44,6 @@
         <dependency>
             <groupId>com.embabel.agent</groupId>
             <artifactId>embabel-agent-starter-openai</artifactId>
-            <version>${embabel-agent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.embabel.agent</groupId>
-            <artifactId>embabel-agent-starter</artifactId>
-            <version>${embabel-agent.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.embabel.agent</groupId>
-                    <artifactId>embabel-agent-shell</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Validation -->
@@ -87,7 +74,6 @@
         <dependency>
             <groupId>com.embabel.agent</groupId>
             <artifactId>embabel-agent-test</artifactId>
-            <version>${embabel-agent.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,5 +1,7 @@
 package com.meetingplanner.auth.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
@@ -23,6 +25,7 @@ import java.util.*;
  */
 @Controller
 public class ConsentController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsentController.class);
 
     private final RegisteredClientRepository registeredClientRepository;
     private final OAuth2AuthorizationConsentService authorizationConsentService;
@@ -48,16 +51,16 @@ public class ConsentController {
                          @RequestParam(value = OAuth2ParameterNames.REDIRECT_URI, required = false) String redirectUri,
                          @RequestParam Map<String, Object> parameters) {
         
-        System.out.println("=== CONSENT DEBUG INFO ===");
-        System.out.println("Client ID: " + clientId);
-        System.out.println("Requested Scope: " + scope);
-        System.out.println("State: " + state);
-        System.out.println("Response Type (param): " + responseType);
-        System.out.println("Redirect URI (param): " + redirectUri);
-        System.out.println("Response Type (from map): " + parameters.get("response_type"));
-        System.out.println("Redirect URI (from map): " + parameters.get("redirect_uri"));
-        System.out.println("All parameters: " + parameters);
-        System.out.println("=========================");
+        LOGGER.info("=== CONSENT DEBUG INFO ===");
+        LOGGER.info("Client ID: {}", clientId);
+        LOGGER.info("Requested Scope: {}", scope);
+        LOGGER.info("State: {}", state);
+        LOGGER.info("Response Type (param): {}", responseType);
+        LOGGER.info("Redirect URI (param): {}", redirectUri);
+        LOGGER.info("Response Type (from map): {}", parameters.get("response_type"));
+        LOGGER.info("Redirect URI (from map): {}", parameters.get("redirect_uri"));
+        LOGGER.info("All parameters: {}", parameters);
+        LOGGER.info("=========================");
 
         // Get the registered client information
         RegisteredClient registeredClient = this.registeredClientRepository.findByClientId(clientId);
@@ -77,9 +80,9 @@ public class ConsentController {
         String[] scopeArray = StringUtils.tokenizeToStringArray(scope, " ");
         List<ScopeWithDescription> scopesForConsent = getScopeWithDescriptions(scopeArray, authorizedScopes);
 
-        System.out.println("Scopes for consent: " + scopesForConsent.size());
+        LOGGER.info("Scopes for consent: {}", scopesForConsent.size());
         for (ScopeWithDescription scopeDesc : scopesForConsent) {
-            System.out.println("  - " + scopeDesc.getScope() + ": " + scopeDesc.getDescription());
+            LOGGER.info("  - {} : {}", scopeDesc.getScope(), scopeDesc.getDescription());
         }
 
         // Filter parameters to only include the ones needed for the authorization request
@@ -90,7 +93,7 @@ public class ConsentController {
         filteredParameters.put("state", state);
         // Don't include the original scope parameter - we'll handle scopes separately
         
-        System.out.println("Filtered parameters: " + filteredParameters);
+        LOGGER.info("Filtered parameters: {}", filteredParameters);
         
         // Add attributes to the model for the template
         model.addAttribute("clientId", clientId);

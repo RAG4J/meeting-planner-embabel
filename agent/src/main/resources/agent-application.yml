@@ -23,3 +23,10 @@ spring:
   autoconfigure:
     exclude:
       - org.springframework.ai.mcp.client.autoconfigure.SseWebFluxTransportAutoConfiguration
+
+embabel:
+  models:
+    default-llm: gpt-5-mini
+    llms:
+      best: gpt-5
+      balanced: gpt-5-mini

@@ -3,11 +3,16 @@ package org.rag4j.meetingplanner.agent;
 import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
+import com.embabel.agent.api.common.Ai;
+import com.embabel.agent.api.common.LlmReference;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.config.models.OpenAiModels;
+import org.rag4j.meetingplanner.agent.config.LlmModel;
 import org.rag4j.meetingplanner.agent.model.location.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.rag4j.meetingplanner.agent.config.LlmModel.BALANCED;
 
 @Agent(
         name = "LocationAgent",
@@ -19,10 +24,10 @@ public class LocationAgent {
 
     @AchievesGoal(description = "Book a meeting room at a location for the specified number of people.")
     @Action(toolGroups = {"location"}, description = "Book the available room")
-    public BookingResult bookRoom(SuggestedRoom room, OperationContext context) throws Exception {
+    public BookingResult bookRoom(SuggestedRoom room, Ai ai) throws Exception {
         logger.info("Received book room request: {}", room);
 
-        BookingResult response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
+        BookingResult response = ai.withLlmByRole(BALANCED.getModelName())
                 .createObject(String.format("""
                                  You will be given an suggested room.
                                  If the id of the room is 'non-available', write the response message that it did not work and stop processing.
@@ -41,10 +46,10 @@ public class LocationAgent {
     }
 
     @Action(toolGroups = {"location"}, description = "Check availability of a room at the preferred location")
-    public SuggestedRoom findRoomAtLocation(Location location, RoomRequest roomRequest, OperationContext context) {
+    public SuggestedRoom findRoomAtLocation(Location location, RoomRequest roomRequest, Ai ai) {
         logger.info("Received find room request: {}", roomRequest);
 
-        SuggestedRoom response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
+        SuggestedRoom response = ai.withLlmByRole(BALANCED.getModelName())
                 .createObject(String.format("""
                                  You will be given an Id for a location.
                                  You have access to all rooms for that location through tools.
@@ -66,10 +71,10 @@ public class LocationAgent {
     }
 
     @Action(toolGroups = {"location"}, description = "Find the best matching location for a meeting based on the provided description.")
-    public Location findLocation(RoomRequest request, OperationContext context) {
+    public Location findLocation(RoomRequest request, Ai ai) {
         logger.info("Received meeting request: {}", request);
 
-        Location response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
+        Location response = ai.withLlmByRole(BALANCED.getModelName())
                 .createObject(String.format("""
                                  You will be given a description for a location.
                                  You have access to all available locations through tools.
@@ -86,5 +91,4 @@ public class LocationAgent {
         logger.info("Response generated: {}", response);
         return response;
     }
-
 }

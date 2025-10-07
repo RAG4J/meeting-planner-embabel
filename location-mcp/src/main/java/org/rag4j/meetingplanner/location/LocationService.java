@@ -50,10 +50,10 @@ public class LocationService {
         RoomAvailableResponse response;
         if (bestAvailableRoom.isPresent()) {
             Room room = bestAvailableRoom.get();
-            response = new RoomAvailableResponse(request.locationId(), true, room.roomId(), request.startTime(),
+            response = new RoomAvailableResponse(request.locationId(), true, room.roomId(), request.date(), request.startTime(),
                     request.durationInMinutes());
         } else {
-            response = new RoomAvailableResponse(request.locationId(), false, null, null, 0);
+            response = new RoomAvailableResponse(request.locationId(), false, null, null, null,0);
         }
 
         logger.info("Response for check room availability {}", response);
