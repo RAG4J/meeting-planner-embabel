@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Sessions - Admin Dashboard</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body class="bg-light">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">
+                <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/users"><i class="fas fa-users me-1"></i>Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/sessions"><i class="fas fa-clock me-1"></i>Sessions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/clients"><i class="fas fa-desktop me-1"></i>Clients</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h2">
+                        <i class="fas fa-user-clock me-2"></i>Sessions for: <span th:text="${username}">username</span>
+                    </h1>
+                    <div>
+                        <a href="/admin/sessions" class="btn btn-secondary me-2">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Sessions
+                        </a>
+                        <a th:href="@{/admin/users/{username}/edit(username=${username})}" class="btn btn-primary">
+                            <i class="fas fa-user-edit me-1"></i>Edit User
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Information Card -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-user me-2"></i>User Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Username:</strong><br>
+                                <span th:text="${username}">username</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Active Sessions:</strong><br>
+                                <span th:text="${#lists.size(sessions)}">0</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>OAuth2 Authorizations:</strong><br>
+                                <span th:text="${#lists.size(authorizations)}">0</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Active Authorizations:</strong><br>
+                                <span th:text="${#lists.size(authorizations.?[active])}">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HTTP Sessions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-globe me-2"></i>HTTP Sessions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(sessions)}" class="text-center py-4">
+                            <i class="fas fa-globe fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No active HTTP sessions found for this user.</p>
+                            <p class="text-muted small">HTTP session information is limited with in-memory session storage.</p>
+                        </div>
+                        
+                        <div th:unless="${#lists.isEmpty(sessions)}" class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-id-card me-1"></i>Session ID</th>
+                                        <th><i class="fas fa-calendar-plus me-1"></i>Created</th>
+                                        <th><i class="fas fa-clock me-1"></i>Last Access</th>
+                                        <th><i class="fas fa-hourglass-end me-1"></i>Expires</th>
+                                        <th><i class="fas fa-check-circle me-1"></i>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="session : ${sessions}">
+                                        <td>
+                                            <code class="small" th:text="${#strings.abbreviate(session.sessionId, 20)}">session-id</code>
+                                        </td>
+                                        <td>
+                                            <span th:text="${#temporals.format(session.creationTime, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+                                        </td>
+                                        <td>
+                                            <span th:text="${#temporals.format(session.lastAccessTime, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:30</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${session.expiryTime != null}" 
+                                                  th:text="${#temporals.format(session.expiryTime, 'yyyy-MM-dd HH:mm')}">2024-01-01 14:00</span>
+                                            <span th:unless="${session.expiryTime != null}" class="text-muted">Never</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${session.active}" class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Active
+                                            </span>
+                                            <span th:unless="${session.active}" class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Expired
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OAuth2 Authorizations -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-key me-2"></i>OAuth2 Authorizations
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(authorizations)}" class="text-center py-4">
+                            <i class="fas fa-key fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No OAuth2 authorizations found for this user.</p>
+                            <p class="text-muted small">Authorizations will appear here when the user authenticates with OAuth2 clients.</p>
+                        </div>
+                        
+                        <div th:unless="${#lists.isEmpty(authorizations)}" class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-desktop me-1"></i>Client</th>
+                                        <th><i class="fas fa-shield-alt me-1"></i>Scopes</th>
+                                        <th><i class="fas fa-clock me-1"></i>Authorized</th>
+                                        <th><i class="fas fa-key me-1"></i>Access Token</th>
+                                        <th><i class="fas fa-redo me-1"></i>Refresh Token</th>
+                                        <th><i class="fas fa-check-circle me-1"></i>Status</th>
+                                        <th><i class="fas fa-cogs me-1"></i>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="auth : ${authorizations}">
+                                        <td>
+                                            <strong th:text="${auth.clientName}">Client Name</strong>
+                                            <br>
+                                            <small class="text-muted" th:text="${auth.clientId}">client-id</small>
+                                        </td>
+                                        <td>
+                                            <div th:each="scope : ${#strings.listSplit(auth.scopes, ', ')}" class="d-inline-block">
+                                                <span class="badge bg-secondary me-1 mb-1" th:text="${scope}">scope</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span th:text="${#temporals.format(auth.authorizationTime, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+                                        </td>
+                                        <td>
+                                            <div th:if="${auth.accessTokenExpiresAt != null}">
+                                                <small class="text-muted">Expires:</small><br>
+                                                <span th:text="${#temporals.format(auth.accessTokenExpiresAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 13:00</span>
+                                            </div>
+                                            <div th:unless="${auth.accessTokenExpiresAt != null}">
+                                                <span class="text-muted">N/A</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div th:if="${auth.refreshTokenExpiresAt != null}">
+                                                <small class="text-muted">Expires:</small><br>
+                                                <span th:text="${#temporals.format(auth.refreshTokenExpiresAt, 'yyyy-MM-dd HH:mm')}">2024-01-08 12:00</span>
+                                            </div>
+                                            <div th:unless="${auth.refreshTokenExpiresAt != null}">
+                                                <span class="text-muted">N/A</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span th:if="${auth.active}" class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Active
+                                            </span>
+                                            <span th:unless="${auth.active}" class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Expired
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a th:href="@{/admin/clients/{clientId}(clientId=${auth.clientId})}" 
+                                                   class="btn btn-outline-info btn-sm" title="View Client">
+                                                    <i class="fas fa-desktop"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                        title="Revoke Authorization" data-bs-toggle="modal" 
+                                                        th:data-bs-target="'#revokeModal-' + ${auth.id}">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revoke Confirmation Modals -->
+    <div th:each="auth : ${authorizations}" th:id="'revokeModal-' + ${auth.id}" 
+         class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>Confirm Revoke
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to revoke this authorization for <strong th:text="${username}">username</strong>?</p>
+                    <div class="border rounded p-3 bg-light">
+                        <div><strong>Client:</strong> <span th:text="${auth.clientName}">Client Name</span></div>
+                        <div><strong>Scopes:</strong> <span th:text="${auth.scopes}">scopes</span></div>
+                        <div><strong>Authorized:</strong> <span th:text="${#temporals.format(auth.authorizationTime, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span></div>
+                    </div>
+                    <p class="text-muted small mt-2">This action cannot be undone. The user will need to re-authorize the client.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form th:action="@{/admin/sessions/revoke/{authId}(authId=${auth.id})}" 
+                          method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-ban me-1"></i>Revoke Authorization
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

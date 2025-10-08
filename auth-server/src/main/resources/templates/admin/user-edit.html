@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User - Admin Dashboard</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body class="bg-light">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">
+                <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/users"><i class="fas fa-users me-1"></i>Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/sessions"><i class="fas fa-clock me-1"></i>Sessions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/clients"><i class="fas fa-desktop me-1"></i>Clients</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h2">
+                        <i class="fas fa-user-edit me-2"></i>Edit User: <span th:text="${user.username}">username</span>
+                    </h1>
+                    <a href="/admin/users" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Users
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit User Form -->
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-user-edit me-2"></i>Update User Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/users/{username}/edit(username=${user.username})}" method="post">
+                            <!-- Username Display -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-user me-1"></i>Username
+                                </label>
+                                <input type="text" class="form-control" th:value="${user.username}" disabled>
+                                <div class="form-text text-muted">
+                                    Username cannot be changed.
+                                </div>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-1"></i>New Password
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Leave empty to keep current password">
+                                <div class="form-text">
+                                    Leave empty if you don't want to change the password.
+                                </div>
+                            </div>
+
+                            <!-- Roles Selection -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-shield-alt me-1"></i>Roles
+                                </label>
+                                <div class="border rounded p-3 bg-light">
+                                    <div th:each="role : ${availableRoles}" class="form-check">
+                                        <input class="form-check-input" type="checkbox" 
+                                               th:id="'role-' + ${role}" 
+                                               name="roles" 
+                                               th:value="${role}"
+                                               th:checked="${#sets.contains(user.roles, role)}">
+                                        <label class="form-check-label" th:for="'role-' + ${role}">
+                                            <span th:text="${role}" 
+                                                  th:class="${role == 'ADMIN'} ? 'badge bg-danger me-1' : 
+                                                           (role == 'MEETING_PLANNER') ? 'badge bg-info me-1' : 
+                                                           'badge bg-secondary me-1'">ROLE</span>
+                                            <span th:switch="${role}">
+                                                <span th:case="'USER'">Basic user access</span>
+                                                <span th:case="'ADMIN'">Full administrative access</span>
+                                                <span th:case="'MEETING_PLANNER'">Meeting planning permissions</span>
+                                                <span th:case="*">Custom role</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-text">
+                                    Select one or more roles for the user.
+                                </div>
+                            </div>
+
+                            <!-- Current Status Display -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-info-circle me-1"></i>Current Status
+                                </label>
+                                <div class="border rounded p-3 bg-light">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <strong>Account Status:</strong>
+                                            <span th:if="${user.enabled}" class="badge bg-success ms-1">
+                                                <i class="fas fa-check me-1"></i>Active
+                                            </span>
+                                            <span th:unless="${user.enabled}" class="badge bg-danger ms-1">
+                                                <i class="fas fa-times me-1"></i>Disabled
+                                            </span>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Account Valid:</strong>
+                                            <span th:if="${user.accountNonExpired}" class="badge bg-success ms-1">
+                                                <i class="fas fa-check me-1"></i>Valid
+                                            </span>
+                                            <span th:unless="${user.accountNonExpired}" class="badge bg-danger ms-1">
+                                                <i class="fas fa-times me-1"></i>Expired
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-sm-6">
+                                            <strong>Account Locked:</strong>
+                                            <span th:if="${user.accountNonLocked}" class="badge bg-success ms-1">
+                                                <i class="fas fa-check me-1"></i>Unlocked
+                                            </span>
+                                            <span th:unless="${user.accountNonLocked}" class="badge bg-danger ms-1">
+                                                <i class="fas fa-lock me-1"></i>Locked
+                                            </span>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Credentials:</strong>
+                                            <span th:if="${user.credentialsNonExpired}" class="badge bg-success ms-1">
+                                                <i class="fas fa-check me-1"></i>Valid
+                                            </span>
+                                            <span th:unless="${user.credentialsNonExpired}" class="badge bg-danger ms-1">
+                                                <i class="fas fa-times me-1"></i>Expired
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/admin/users" class="btn btn-secondary">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Update User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Roles Display -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>Current User Roles
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#sets.isEmpty(user.roles)}" class="text-muted">
+                            No roles assigned to this user.
+                        </div>
+                        <div th:unless="${#sets.isEmpty(user.roles)}">
+                            <span th:each="role : ${user.roles}" 
+                                  th:class="${role == 'ADMIN'} ? 'badge bg-danger me-2 mb-2' : 
+                                           (role == 'MEETING_PLANNER') ? 'badge bg-info me-2 mb-2' : 
+                                           'badge bg-secondary me-2 mb-2'" 
+                                  th:text="${role}">ROLE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-bolt me-2"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2 d-md-flex">
+                            <a th:href="@{/admin/sessions/user/{username}(username=${user.username})}" 
+                               class="btn btn-outline-info">
+                                <i class="fas fa-clock me-1"></i>View User Sessions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

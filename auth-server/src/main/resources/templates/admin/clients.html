@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Management - Admin Dashboard</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body class="bg-light">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">
+                <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/users"><i class="fas fa-users me-1"></i>Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/sessions"><i class="fas fa-clock me-1"></i>Sessions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/clients"><i class="fas fa-desktop me-1"></i>Clients</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row">
+            <div class="col-12">
+                <h1 class="h2 mb-4">
+                    <i class="fas fa-desktop me-2"></i>OAuth2 Client Management
+                </h1>
+            </div>
+        </div>
+
+        <!-- Statistics Row -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card border-primary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-desktop fa-2x text-primary mb-2"></i>
+                        <h3 class="mb-0" th:text="${clientStats.totalClients}">2</h3>
+                        <p class="text-muted mb-0">Total Clients</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-info text-center">
+                    <div class="card-body">
+                        <i class="fas fa-globe fa-2x text-info mb-2"></i>
+                        <h3 class="mb-0" th:text="${clientStats.webClients}">1</h3>
+                        <p class="text-muted mb-0">Web Applications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-success text-center">
+                    <div class="card-body">
+                        <i class="fas fa-cog fa-2x text-success mb-2"></i>
+                        <h3 class="mb-0" th:text="${clientStats.apiClients}">1</h3>
+                        <p class="text-muted mb-0">API Clients</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-warning text-center">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-2x text-warning mb-2"></i>
+                        <h3 class="mb-0" th:text="${clientStats.totalScopes}">6</h3>
+                        <p class="text-muted mb-0">Total Scopes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-list me-2"></i>Registered OAuth2 Clients
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(clients)}" class="text-center py-4">
+                            <i class="fas fa-desktop fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No OAuth2 clients found.</p>
+                        </div>
+                        
+                        <div th:unless="${#lists.isEmpty(clients)}" class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-desktop me-1"></i>Client</th>
+                                        <th><i class="fas fa-key me-1"></i>Authentication</th>
+                                        <th><i class="fas fa-exchange-alt me-1"></i>Grant Types</th>
+                                        <th><i class="fas fa-shield-alt me-1"></i>Scopes</th>
+                                        <th><i class="fas fa-clock me-1"></i>Token TTL</th>
+                                        <th><i class="fas fa-check-circle me-1"></i>Consent</th>
+                                        <th><i class="fas fa-cogs me-1"></i>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="client : ${clients}">
+                                        <td>
+                                            <strong th:text="${client.displayName}">Client Display Name</strong>
+                                            <br>
+                                            <small class="text-muted" th:text="${client.clientId}">client-id</small>
+                                        </td>
+                                        <td>
+                                            <div th:each="method : ${client.authenticationMethods}" class="d-inline-block">
+                                                <span class="badge bg-secondary me-1 mb-1" 
+                                                      th:text="${method == 'client_secret_basic'} ? 'Basic Auth' : 
+                                                               ${method == 'client_secret_post'} ? 'Post Auth' : 
+                                                               ${method}">method</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div th:each="grantType : ${client.grantTypes}" class="d-inline-block">
+                                                <span th:class="${grantType == 'authorization_code'} ? 'badge bg-primary me-1 mb-1' : 
+                                                               ${grantType == 'client_credentials'} ? 'badge bg-success me-1 mb-1' : 
+                                                               ${grantType == 'refresh_token'} ? 'badge bg-info me-1 mb-1' : 
+                                                               'badge bg-secondary me-1 mb-1'"
+                                                      th:text="${grantType == 'authorization_code'} ? 'Auth Code' : 
+                                                               ${grantType == 'client_credentials'} ? 'Client Creds' : 
+                                                               ${grantType == 'refresh_token'} ? 'Refresh' : 
+                                                               ${grantType}">grant</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="scope-container" style="max-height: 60px; overflow-y: auto;">
+                                                <div th:each="scope : ${client.scopes}" class="d-inline-block">
+                                                    <span class="badge bg-light text-dark border me-1 mb-1" th:text="${scope}">scope</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">Access:</small><br>
+                                            <span th:text="${client.accessTokenTtl}">1 hour</span><br>
+                                            <small class="text-muted">Refresh:</small><br>
+                                            <span th:text="${client.refreshTokenTtl}">7 days</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${client.requireConsent}" class="badge bg-warning">
+                                                <i class="fas fa-check me-1"></i>Required
+                                            </span>
+                                            <span th:unless="${client.requireConsent}" class="badge bg-secondary">
+                                                <i class="fas fa-times me-1"></i>Not Required
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/clients/{clientId}(clientId=${client.clientId})}" 
+                                               class="btn btn-outline-primary btn-sm" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information Cards -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Grant Type Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge bg-primary">Auth Code</span></td>
+                                        <td>Authorization Code Flow - for web applications with user interaction</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-success">Client Creds</span></td>
+                                        <td>Client Credentials Flow - for server-to-server communication</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-info">Refresh</span></td>
+                                        <td>Refresh Token - allows token renewal without re-authentication</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>Scope Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>openid:</strong></td>
+                                        <td>OpenID Connect identity verification</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>profile:</strong></td>
+                                        <td>Basic profile information access</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>email:</strong></td>
+                                        <td>Email address access</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>meeting.*:</strong></td>
+                                        <td>Meeting-related permissions</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>mcp.invoke:</strong></td>
+                                        <td>MCP (Model Context Protocol) service access</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

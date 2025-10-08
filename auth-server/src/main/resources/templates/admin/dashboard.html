@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Meeting Planner Auth Server</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body class="bg-light">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">
+                <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/users"><i class="fas fa-users me-1"></i>Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/sessions"><i class="fas fa-clock me-1"></i>Sessions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/clients"><i class="fas fa-desktop me-1"></i>Clients</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <span class="navbar-text me-3">
+                        <i class="fas fa-user me-1"></i>Logged in as: <strong th:text="${currentUser}">admin</strong>
+                    </span>
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row">
+            <div class="col-12">
+                <h1 class="h2 mb-4">
+                    <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                </h1>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row">
+            <!-- Users Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title text-primary">Users</h5>
+                                <h2 class="mb-0" th:text="${userCount}">3</h2>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-users fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="/admin/users" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Manage Users
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Authorizations Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card border-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title text-success">Active Tokens</h5>
+                                <h2 class="mb-0" th:text="${sessionStats.activeAuthorizations}">0</h2>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-key fa-2x text-success"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="/admin/sessions" class="btn btn-success btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>View Sessions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OAuth2 Clients Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card border-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title text-info">OAuth2 Clients</h5>
+                                <h2 class="mb-0" th:text="${clientStats.totalClients}">2</h2>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-desktop fa-2x text-info"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="/admin/clients" class="btn btn-info btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Manage Clients
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Authorizations Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card border-warning">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title text-warning">Total Authorizations</h5>
+                                <h2 class="mb-0" th:text="${sessionStats.totalAuthorizations}">0</h2>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-chart-line fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">All time</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-bolt me-2"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <a href="/admin/users/create" class="btn btn-outline-primary btn-lg w-100">
+                                    <i class="fas fa-user-plus fa-2x d-block mb-2"></i>
+                                    Create New User
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="/admin/sessions" class="btn btn-outline-success btn-lg w-100">
+                                    <i class="fas fa-eye fa-2x d-block mb-2"></i>
+                                    View Active Sessions
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="/admin/clients" class="btn btn-outline-info btn-lg w-100">
+                                    <i class="fas fa-cog fa-2x d-block mb-2"></i>
+                                    Manage OAuth2 Clients
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Information -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-info-circle me-2"></i>System Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Server Type:</strong></td>
+                                <td>OAuth2 Authorization Server</td>
+                            </tr>
+                            <tr>
+                                <td><strong>User Storage:</strong></td>
+                                <td>In-Memory</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Session Storage:</strong></td>
+                                <td>In-Memory</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Active Users:</strong></td>
+                                <td th:text="${sessionStats.uniqueUsers}">0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Client Breakdown
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Web Applications:</strong></td>
+                                <td th:text="${clientStats.webClients}">1</td>
+                            </tr>
+                            <tr>
+                                <td><strong>API Clients:</strong></td>
+                                <td th:text="${clientStats.apiClients}">1</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Scopes:</strong></td>
+                                <td th:text="${clientStats.totalScopes}">6</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Active Clients:</strong></td>
+                                <td th:text="${sessionStats.uniqueClients}">0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

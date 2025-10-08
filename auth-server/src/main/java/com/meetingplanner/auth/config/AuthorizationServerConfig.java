@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -22,7 +23,9 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -57,6 +60,7 @@ import java.util.UUID;
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class AuthorizationServerConfig {
 
     @Bean
@@ -99,16 +103,20 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .formLogin(Customizer.withDefaults()) // Enable form login
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Admin endpoints require ADMIN role
+                        .requestMatchers("/webjars/**", "/css/**", "/js/**", "/favicon.ico").permitAll() // Static resources
+                        .anyRequest().authenticated());
 
         return http.build();
     }
 
     /**
      * Demo user details service with test users.
+     * Returns InMemoryUserDetailsManager to allow user management.
      */
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails user1 = User.builder()
                 .username("user")
                 .password(passwordEncoder.encode("password"))
@@ -220,6 +228,15 @@ public class AuthorizationServerConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * OAuth2 authorization service for managing authorizations.
+     */
+    @Bean
+    public OAuth2AuthorizationService authorizationService() {
+        // In production, you'd use a database-backed implementation
+        return new InMemoryOAuth2AuthorizationService();
     }
 
     /**
