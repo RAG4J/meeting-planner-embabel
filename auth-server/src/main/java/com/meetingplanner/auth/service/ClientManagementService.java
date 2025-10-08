@@ -1,11 +1,14 @@
 package com.meetingplanner.auth.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class ClientManagementService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ClientManagementService.class);
     private final RegisteredClientRepository registeredClientRepository;
 
     public ClientManagementService(RegisteredClientRepository registeredClientRepository) {
@@ -29,28 +33,75 @@ public class ClientManagementService {
     }
 
     /**
+     * Test method to verify registered clients at startup.
+     */
+    @PostConstruct
+    public void logRegisteredClients() {
+        logger.info("ClientManagementService initialized");
+        logger.info("RegisteredClientRepository type: {}", registeredClientRepository.getClass().getName());
+        
+        // Test direct access to known clients
+        RegisteredClient webClient = registeredClientRepository.findByClientId("meeting-planner-web");
+        RegisteredClient mcpClient = registeredClientRepository.findByClientId("location-mcp");
+        
+        logger.info("Web client found: {}", webClient != null ? webClient.getClientId() : "NOT FOUND");
+        logger.info("MCP client found: {}", mcpClient != null ? mcpClient.getClientId() : "NOT FOUND");
+        
+        // Test reflection access
+        List<ClientInfo> clients = getAllClients();
+        logger.info("Total clients retrieved via getAllClients(): {}", clients.size());
+        for (ClientInfo client : clients) {
+            logger.info("Client: {} (ID: {})", client.getClientId(), client.getId());
+        }
+    }
+
+    /**
      * Get all registered clients.
      */
     public List<ClientInfo> getAllClients() {
         List<ClientInfo> clients = new ArrayList<>();
+        logger.debug("Retrieving all registered clients");
         
         if (registeredClientRepository instanceof InMemoryRegisteredClientRepository) {
             try {
-                // Access internal map using reflection
-                var field = InMemoryRegisteredClientRepository.class.getDeclaredField("registrations");
-                field.setAccessible(true);
-                @SuppressWarnings("unchecked")
-                Map<String, RegisteredClient> clientMap = 
-                    (Map<String, RegisteredClient>) field.get(registeredClientRepository);
+                logger.debug("Using reflection to access InMemoryRegisteredClientRepository");
                 
-                for (RegisteredClient client : clientMap.values()) {
-                    clients.add(toClientInfo(client));
+                // Try multiple possible field names (based on Spring Security 1.5.2)
+                String[] possibleFieldNames = {"idRegistrationMap", "clientIdRegistrationMap", "registrations", "clients", "registeredClients"};
+                Map<String, RegisteredClient> clientMap = null;
+                
+                for (String fieldName : possibleFieldNames) {
+                    try {
+                        var field = InMemoryRegisteredClientRepository.class.getDeclaredField(fieldName);
+                        field.setAccessible(true);
+                        @SuppressWarnings("unchecked")
+                        Map<String, RegisteredClient> map = 
+                            (Map<String, RegisteredClient>) field.get(registeredClientRepository);
+                        clientMap = map;
+                        logger.debug("Successfully accessed field '{}' with {} clients", fieldName, map.size());
+                        break;
+                    } catch (NoSuchFieldException e) {
+                        logger.debug("Field '{}' not found, trying next", fieldName);
+                    }
+                }
+                
+                if (clientMap != null) {
+                    for (RegisteredClient client : clientMap.values()) {
+                        clients.add(toClientInfo(client));
+                        logger.debug("Added client: {} ({})", client.getClientId(), client.getId());
+                    }
+                } else {
+                    logger.error("Could not find any suitable field in InMemoryRegisteredClientRepository");
                 }
             } catch (Exception e) {
-                // Fallback: return empty list if reflection fails
+                logger.error("Failed to access registered clients via reflection", e);
             }
+        } else {
+            logger.warn("RegisteredClientRepository is not InMemoryRegisteredClientRepository: {}", 
+                       registeredClientRepository.getClass().getName());
         }
         
+        logger.info("Retrieved {} registered clients", clients.size());
         return clients.stream()
                 .sorted(Comparator.comparing(ClientInfo::getClientId))
                 .collect(Collectors.toList());
