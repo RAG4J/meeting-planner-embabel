@@ -103,6 +103,7 @@ public class AuthorizationServerConfig {
         http
                 .formLogin(Customizer.withDefaults()) // Enable form login
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/actuator/health").permitAll() // ~~~ health endpoint is public
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin endpoints require ADMIN role
                         .requestMatchers("/webjars/**", "/css/**", "/js/**", "/favicon.ico").permitAll() // Static
                         // resources
