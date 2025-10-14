@@ -70,18 +70,17 @@ public class AuthorizationServerConfig {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
                 OAuth2AuthorizationServerConfigurer.authorizationServer();
 
-        // Configure custom consent page
-        authorizationServerConfigurer.authorizationEndpoint(authorizationEndpoint ->
-                authorizationEndpoint.consentPage("/oauth2/consent"));
-
         http
-                .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
-                .with(authorizationServerConfigurer, authorizationServer ->
-                        authorizationServer.oidc(oidc -> oidc
-                                .providerConfigurationEndpoint(providerConfiguration ->
-                                        providerConfiguration.providerConfigurationCustomizer(this::customizeProviderConfiguration)
+                .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher()) // ~~~ limit to oauth2 endpoints
+                .with(authorizationServerConfigurer, authorizationServer -> // ~~~ use the provided configurer
+                        authorizationServer
+                                .authorizationEndpoint(authorizationEndpoint ->
+                                        authorizationEndpoint.consentPage("/oauth2/consent")) // ~~~ register custom consent page
+                                .oidc(oidc -> oidc
+                                        .providerConfigurationEndpoint(providerConfiguration ->
+                                                providerConfiguration.providerConfigurationCustomizer(this::customizeProviderConfiguration)
+                                        )
                                 )
-                        )
                 )
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated());
 
@@ -105,7 +104,8 @@ public class AuthorizationServerConfig {
                 .formLogin(Customizer.withDefaults()) // Enable form login
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin endpoints require ADMIN role
-                        .requestMatchers("/webjars/**", "/css/**", "/js/**", "/favicon.ico").permitAll() // Static resources
+                        .requestMatchers("/webjars/**", "/css/**", "/js/**", "/favicon.ico").permitAll() // Static
+                        // resources
                         .anyRequest().authenticated());
 
         return http.build();
