@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Meeting Planner</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center min-vh-100 py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-3">
+                    <div class="card-body p-4 p-md-5 text-center">
+                        <!-- Error Icon and Title -->
+                        <div class="mb-4">
+                            <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                            <h1 class="h2 fw-bold text-dark mt-3">Oops! Something went wrong</h1>
+                            <p class="lead text-muted">We encountered an error while processing your request</p>
+                        </div>
+
+                        <!-- Error Details -->
+                        <div class="alert alert-warning border-start border-warning border-4 text-start mb-4">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Error Details
+                            </h5>
+                            <p class="mb-2">
+                                <strong>Status Code:</strong> <span th:text="${statusCode}">500</span>
+                            </p>
+                            <p class="mb-2" th:if="${requestUri}">
+                                <strong>Requested Resource:</strong> <code th:text="${requestUri}">/unknown</code>
+                            </p>
+                            <p class="mb-0" th:if="${errorMessage}">
+                                <strong>Error Message:</strong> <span th:text="${errorMessage}">An error occurred</span>
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <a href="/" class="btn btn-primary w-100">
+                                    <i class="fas fa-home me-2"></i>
+                                    Home
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <button onclick="location.reload()" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-redo me-2"></i>
+                                    Try Again
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <button onclick="history.back()" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Go Back
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Meeting Planner Authorization Server
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied - Meeting Planner</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center min-vh-100 py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-3">
+                    <div class="card-body p-4 p-md-5 text-center">
+                        <!-- Error Icon and Title -->
+                        <div class="mb-4">
+                            <i class="fas fa-shield-alt text-warning" style="font-size: 4rem;"></i>
+                            <h1 class="h2 fw-bold text-dark mt-3">Access Denied</h1>
+                            <p class="lead text-muted">Sorry, you don't have permission to access this resource</p>
+                        </div>
+
+                        <!-- Error Details -->
+                        <div class="alert alert-warning border-start border-warning border-4 text-start mb-4">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Insufficient Permissions
+                            </h5>
+                            <p class="mb-2">
+                                <strong>Status Code:</strong> <span th:text="${statusCode}">403</span>
+                            </p>
+                            <p class="mb-2" th:if="${requestUri}">
+                                <strong>Requested Resource:</strong> <code th:text="${requestUri}">/admin</code>
+                            </p>
+                            <p class="mb-0" th:if="${currentUser}">
+                                <strong>Current User:</strong> <span th:text="${currentUser}">user</span>
+                            </p>
+                        </div>
+
+                        <!-- Explanation -->
+                        <div class="mb-4">
+                            <h5 class="h6 fw-semibold mb-3">Why am I seeing this?</h5>
+                            <div class="text-start">
+                                <div class="d-flex align-items-start mb-2">
+                                    <i class="fas fa-info-circle text-primary me-2 mt-1"></i>
+                                    <div>
+                                        <strong>Admin Access Required:</strong> This resource requires administrator privileges.
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start mb-2">
+                                    <i class="fas fa-user text-secondary me-2 mt-1"></i>
+                                    <div>
+                                        <strong>Current Role:</strong> Your account has standard user permissions.
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-key text-info me-2 mt-1"></i>
+                                    <div>
+                                        <strong>Need Access?</strong> Contact an administrator to request elevated permissions.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Account Info -->
+                        <div class="alert alert-info border-0 mb-4">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                Demo Environment
+                            </h6>
+                            <p class="mb-0 small">
+                                For testing purposes, you can use the <strong>admin</strong> account (username: <code>admin</code>, password: <code>admin</code>) to access administrative features.
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <a href="/" class="btn btn-primary w-100">
+                                    <i class="fas fa-home me-2"></i>
+                                    Home
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="/logout" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-sign-out-alt me-2"></i>
+                                    Switch User
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <button onclick="history.back()" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Go Back
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Technical Details (Collapsible) -->
+                        <div class="mt-4">
+                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#technicalDetails" aria-expanded="false">
+                                <i class="fas fa-cog me-1"></i>
+                                Technical Details
+                            </button>
+                            <div class="collapse mt-3" id="technicalDetails">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body small text-start">
+                                        <p class="mb-1"><strong>HTTP Status:</strong> <span th:text="${statusCode}">403</span> Forbidden</p>
+                                        <p class="mb-1" th:if="${errorMessage}"><strong>Message:</strong> <span th:text="${errorMessage}">Access Denied</span></p>
+                                        <p class="mb-1" th:if="${requestUri}"><strong>Path:</strong> <span th:text="${requestUri}">/admin</span></p>
+                                        <p class="mb-0"><strong>Server:</strong> Meeting Planner Authorization Server</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Meeting Planner Authorization Server
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

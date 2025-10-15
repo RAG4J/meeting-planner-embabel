@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Planner - Authorization Server</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body class="bg-light min-vh-100 py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="card shadow-lg border-0 rounded-3">
+                    <div class="card-body p-4 p-md-5">
+                        <!-- Header -->
+                        <div class="text-center mb-5">
+                            <h1 class="h2 fw-bold text-dark">
+                                <i class="fas fa-shield-alt me-3 text-primary"></i>
+                                Meeting Planner Authorization Server
+                            </h1>
+                            <p class="lead text-muted">Secure OAuth2 Authentication & Authorization</p>
+                            <p class="text-muted small">Version <span th:text="${serverVersion}">1.0.0</span></p>
+                        </div>
+
+                        <!-- Logout success message -->
+                        <div th:if="${logoutSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Logout Successful!</strong> You have been logged out successfully.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Introduction Section -->
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <div class="alert alert-primary border-start border-primary border-4">
+                                    <h4 class="alert-heading">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Welcome to the Authorization Server
+                                    </h4>
+                                    <p class="mb-0">
+                                        This OAuth2 Authorization Server provides secure authentication and authorization 
+                                        services for the Meeting Planner application ecosystem. It handles user authentication, 
+                                        client authorization, and token management using industry-standard OAuth2 and OpenID Connect protocols.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Features Section -->
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-users text-success me-2"></i>
+                                            User Authentication
+                                        </h5>
+                                        <p class="card-text">
+                                            Secure login system with support for multiple user roles including 
+                                            regular users, meeting planners, and administrators.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-key text-warning me-2"></i>
+                                            OAuth2 & OpenID Connect
+                                        </h5>
+                                        <p class="card-text">
+                                            Full OAuth2 Authorization Code flow with PKCE support, 
+                                            consent management, and OpenID Connect for identity verification.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-cog text-primary me-2"></i>
+                                            Client Management
+                                        </h5>
+                                        <p class="card-text">
+                                            Registered OAuth2 clients including the Meeting Planner web application 
+                                            and MCP (Model Context Protocol) server integration.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-calendar-check text-info me-2"></i>
+                                            Meeting Permissions
+                                        </h5>
+                                        <p class="card-text">
+                                            Granular scope-based permissions for meeting operations including 
+                                            read access, meeting creation, and MCP service invocation.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- How to Use Section -->
+                        <div class="mb-5">
+                            <h3 class="h4 mb-4">
+                                <i class="fas fa-question-circle me-2 text-secondary"></i>
+                                How to Use This Service
+                            </h3>
+                            <div class="row">
+                                <div class="col-12">
+                                    <ol class="list-group list-group-numbered">
+                                        <li class="list-group-item d-flex align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">For End Users</div>
+                                                Navigate to the Meeting Planner web application and sign in. You'll be redirected here for authentication and consent.
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">For Developers</div>
+                                                Implement the OAuth2 Authorization Code flow in your client applications using the standard endpoints.
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">For Administrators</div>
+                                                Use the admin dashboard to manage users, view active sessions, and configure OAuth2 clients.
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OAuth2 Endpoints Section -->
+                        <div class="mb-5">
+                            <h3 class="h4 mb-4">
+                                <i class="fas fa-link me-2 text-secondary"></i>
+                                OAuth2 Endpoints
+                            </h3>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Endpoint</th>
+                                            <th>Purpose</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>/oauth2/authorize</code></td>
+                                            <td>Authorization endpoint for OAuth2 flow</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>/oauth2/token</code></td>
+                                            <td>Token endpoint for exchanging codes</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>/oauth2/introspect</code></td>
+                                            <td>Token introspection for validation</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>/userinfo</code></td>
+                                            <td>OpenID Connect user information</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>/.well-known/openid-configuration</code></td>
+                                            <td>OpenID Connect discovery document</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <a href="/login" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    Sign In
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="/admin" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-cogs me-2"></i>
+                                    Admin Dashboard
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="/.well-known/openid-configuration" class="btn btn-outline-secondary btn-lg w-100" target="_blank">
+                                    <i class="fas fa-file-code me-2"></i>
+                                    OpenID Config
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Demo Users Info -->
+                        <div class="alert alert-light mt-4 border">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-users me-2"></i>
+                                Demo Accounts Available
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>user</strong> / password
+                                    <br>
+                                    <small class="text-muted">Standard user account</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>admin</strong> / admin
+                                    <br>
+                                    <small class="text-muted">Administrator access</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>planner</strong> / planner
+                                    <br>
+                                    <small class="text-muted">Meeting planner role</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="text-center mt-5 pt-4 border-top">
+                            <p class="text-muted small">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Secure OAuth2 Authorization Server for Meeting Planner
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -102,7 +102,14 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .formLogin(Customizer.withDefaults()) // Enable form login
-                .authorizeHttpRequests(authorize -> authorize
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/?logout") // Redirect to index page after logout with parameter
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                )
+        .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/").permitAll() // ~~~ index page is public
                         .requestMatchers("/actuator/health").permitAll() // ~~~ health endpoint is public
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin endpoints require ADMIN role
                         .requestMatchers("/webjars/**", "/css/**", "/js/**", "/favicon.ico").permitAll() // Static
