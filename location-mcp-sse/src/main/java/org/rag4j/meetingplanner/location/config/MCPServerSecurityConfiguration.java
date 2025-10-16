@@ -15,23 +15,10 @@ public class MCPServerSecurityConfiguration {
                 // Configure authorization rules
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
-                                "/",
-                                "/public/**",
-                                "/static/**",
-                                "/webjars/**",
-                                "/css/**",
-                                "/js/**",
-                                "/images/**",
-                                "/favicon.ico",
-                                "/error",
-                                "/actuator/health",
-                                "/docs",
-                                "/location/**",
-                                "/locations",
-                                "/bookings",
-                                "/calendar"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                                "/sse",
+                                "/mcp/**"
+                        ).authenticated()
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(Customizer.withDefaults()))

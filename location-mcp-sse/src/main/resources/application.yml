@@ -11,6 +11,11 @@ spring:
           resource: false
           prompt: false
           completion: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-server:9000
   main:
     banner-mode: console
     web-application-type: servlet
@@ -25,12 +30,6 @@ spring:
       add-mappings: true
   mvc:
     static-path-pattern: /**
-
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://auth-server:9000
 
 server:
   port: 8081
