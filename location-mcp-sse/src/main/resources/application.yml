@@ -15,7 +15,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://auth-server:9000
+          issuer-uri: http://localhost:9000
   main:
     banner-mode: console
     web-application-type: servlet
@@ -33,6 +33,14 @@ spring:
 
 server:
   port: 8081
+  servlet:
+    session:
+      cookie:
+        same-site: lax
+        secure: false  # Set to true in production with HTTPS
+        http-only: true
+        name: LOCATION_MCP_SESSION
+
 
 logging:
   level:
