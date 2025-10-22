@@ -1,0 +1,25 @@
+server:
+  port: 8085
+
+embabel:
+  models:
+    default-llm: gpt-5-mini
+    llms:
+      best: gpt-5
+      balanced: gpt-5-mini
+
+
+# Logging configuration
+logging:
+  level:
+    org.rag4j.nomnom: INFO
+    org.springframework.web: INFO
+    com.embabel: INFO
+    root: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Application specific configuration
+nomnom:
+  version: 1.0.0-SNAPSHOT
+  description: "NomNom Food Ordering Service for Meetings"

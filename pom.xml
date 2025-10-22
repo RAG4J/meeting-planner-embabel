@@ -38,6 +38,7 @@
         <module>location-model</module>
         <module>location-mcp</module>
         <module>location-mcp-sse</module>
+        <module>nomnom</module>
     </modules>
 
     <dependencyManagement>
