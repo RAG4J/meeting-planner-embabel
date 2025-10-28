@@ -19,6 +19,9 @@ spring:
             location-mcp:
               url: http://localhost:8081
               sse-endpoint: /sse
+            food-drinks-mcp:
+              url: http://localhost:8085
+              sse-endpoint: /sse
 
   autoconfigure:
     exclude:

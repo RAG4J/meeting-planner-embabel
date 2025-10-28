@@ -54,4 +54,19 @@ public class McpToolsConfig {
                 callback -> callback.getToolDefinition().name().contains("time")
         );
     }
+
+    @Bean(name = "mcpFoodAndDrinksToolsGroup")
+    public ToolGroup mcpFoodAndDrinksToolsGroup() {
+        return new McpToolGroup(
+                ToolGroupDescription.Companion.invoke(
+                        "A collection of tools to interact with the MCP food and drinks service",
+                        "food_and_drinks"
+                ),
+                "Spring",
+                "food-drinks-mcp",
+                Set.of(ToolGroupPermission.HOST_ACCESS),
+                mcpSyncClients,
+                callback -> callback.getToolDefinition().name().contains("food")
+        );
+    }
 }

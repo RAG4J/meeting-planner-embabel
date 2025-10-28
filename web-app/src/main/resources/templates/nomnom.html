@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('NomNom Food Orders')}"><title>is replaced</title></head>
+<body>
+<nav th:replace="~{layout/base :: nav}"></nav>
+
+<main>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0">
+                            <i class="fas fa-utensils me-2"></i>NomNom Food Orders
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            Ask the NomNom agent to propose and confirm a food order for your meeting attendees.
+                            Provide the location, desired delivery date, and any additional details or dietary needs.
+                        </p>
+
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span th:text="${success}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="${error}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <form th:action="@{/nomnom}" method="post" th:object="${orderRequest}">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="location" class="form-label">Delivery Location <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="location" th:field="*{location}" placeholder="Enter the meeting location" required>
+                                    <div class="form-text">
+                                        Specify where the food should be delivered (e.g. meeting room or office address).
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="deliveryDate" class="form-label">Delivery Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="deliveryDate" th:field="*{deliveryDate}" required>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="message" class="form-label">Order Details <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="message" th:field="*{message}" rows="5"
+                                              placeholder="Describe what you would like to order, dietary preferences, and budget." required></textarea>
+                                </div>
+
+                                <div class="col-md-12 d-flex justify-content-end gap-2">
+                                    <a href="/" class="btn btn-outline-secondary">Back to Home</a>
+                                    <button type="submit" class="btn btn-warning text-dark">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Order
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>
