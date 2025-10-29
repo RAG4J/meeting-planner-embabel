@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${category.name} + ' - NomNom Food Service'">Category - NomNom Food Service</title>
+    
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <header class="bg-success text-white py-4 mb-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-0" th:text="${category.name}">Category Name</h1>
+                        <p class="mb-0 text-light" th:text="${category.description}">Category description</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="/menu" class="btn btn-light btn-sm">
+                                <i class="bi bi-list-ul"></i> Full Menu
+                            </a>
+                            <a href="/" class="btn btn-light btn-sm">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Products -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-success">
+                        <i class="bi bi-basket"></i>
+                        <strong th:text="${products.size()}">0</strong> products available in this category
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div th:each="product : ${products}" class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h4 class="card-title mb-0" th:text="${product.name}">Product Name</h4>
+                                <span class="badge bg-warning text-dark fs-5" 
+                                      th:text="'€' + ${#numbers.formatDecimal(product.price, 1, 2)}">
+                                    €0.00
+                                </span>
+                            </div>
+                            <p class="card-text flex-grow-1" th:text="${product.description}">
+                                Product description goes here
+                            </p>
+                            <div class="mt-auto pt-3 border-top">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" th:text="'ID: ' + ${product.id}">ID: 1</small>
+                                    <span class="badge bg-success" th:text="${product.category.name}">Category</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${products.isEmpty()}" class="row">
+                <div class="col-12">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        No products found in this category.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-light py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-0">&copy; 2024 NomNom Food Service</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="/menu" class="btn btn-success btn-sm">
+                                <i class="bi bi-list-ul"></i> Full Menu
+                            </a>
+                            <a href="/" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
