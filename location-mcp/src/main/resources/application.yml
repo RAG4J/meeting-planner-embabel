@@ -1,9 +1,0 @@
-spring:
-  ai:
-    mcp:
-      server:
-        name: location-mcp
-        version: 1.0.0
-  main:
-    banner-mode: off
-    web-application-type: none

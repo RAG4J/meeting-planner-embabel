@@ -2,8 +2,8 @@ package org.rag4j.meetingplanner.webapp.controller;
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
-import org.rag4j.meetingplanner.agent.model.location.BookingResult;
-import org.rag4j.meetingplanner.agent.model.location.RoomRequest;
+import org.rag4j.meetingplanner.agent.location.model.BookingResult;
+import org.rag4j.meetingplanner.agent.location.model.RoomRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

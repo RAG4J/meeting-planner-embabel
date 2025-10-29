@@ -35,10 +35,8 @@
         <module>agent</module>
         <module>web-app</module>
         <module>auth-server</module>
-        <module>location-model</module>
-        <module>location-mcp</module>
-        <module>location-mcp-sse</module>
-        <module>nomnom</module>
+        <module>mcp-location</module>
+        <module>mcp-nomnom</module>
     </modules>
 
     <dependencyManagement>

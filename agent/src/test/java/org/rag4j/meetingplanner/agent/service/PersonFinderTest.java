@@ -1,10 +1,10 @@
 package org.rag4j.meetingplanner.agent.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rag4j.meetingplanner.agent.meeting.service.PersonFinder;
 import org.rag4j.meetingplanner.common.model.Agenda;
-import org.rag4j.meetingplanner.agent.model.person.Person;
+import org.rag4j.meetingplanner.agent.meeting.model.Person;
 import java.util.List;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

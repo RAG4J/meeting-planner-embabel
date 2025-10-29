@@ -1,8 +1,8 @@
 package org.rag4j.meetingplanner.webapp.controller;
 
 import com.embabel.agent.core.AgentPlatform;
-import org.rag4j.meetingplanner.agent.model.nomnom.NomNomOrderConfirmation;
-import org.rag4j.meetingplanner.agent.model.nomnom.NomNomOrderRequest;
+import org.rag4j.meetingplanner.agent.nomnom.model.NomNomOrderConfirmation;
+import org.rag4j.meetingplanner.agent.nomnom.model.NomNomOrderRequest;
 import org.rag4j.meetingplanner.webapp.nomnom.NomNomAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
