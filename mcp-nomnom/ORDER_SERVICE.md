@@ -425,27 +425,29 @@ Potential improvements for production use:
 The `OrderService` can be integrated with the existing `HandleOrderAgent` to store processed orders:
 
 ```java
+import org.rag4j.nomnom.orders.model.OrderItem;
+
 @Action
 ProcessedOrder processOrder(ConfirmedOrder confirmedOrder, Order agentOrder, Ai ai) {
     // ... existing processing logic ...
-    
+
     // Store the order in OrderService
     List<OrderItem> orderItems = Arrays.stream(agentOrder.items().items())
-        .map(item -> new org.rag4j.nomnom.orders.OrderItem(
-            item.product(), 
-            item.quantity()
-        ))
-        .toList();
-    
+            .map(item -> new org.rag4j.nomnom.orders.model.OrderItem(
+                    item.product(),
+                    item.quantity()
+            ))
+            .toList();
+
     orderService.createAndStoreOrder(
-        agentOrder.orderId(),
-        agentOrder.location(),
-        agentOrder.deliveryDate(),
-        orderItems,
-        agentOrder.items().note(),
-        OrderStatus.CONFIRMED
+            agentOrder.orderId(),
+            agentOrder.location(),
+            agentOrder.deliveryDate(),
+            orderItems,
+            agentOrder.items().note(),
+            OrderStatus.CONFIRMED
     );
-    
+
     return new ProcessedOrder(true, "Order processed and stored successfully");
 }
 ```

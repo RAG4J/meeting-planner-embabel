@@ -2,15 +2,13 @@ package org.rag4j.nomnom.agent;
 
 import com.embabel.agent.api.annotation.*;
 import com.embabel.agent.api.common.Ai;
+import org.rag4j.nomnom.agent.model.*;
 import org.rag4j.nomnom.orders.OrderService;
-import org.rag4j.nomnom.orders.OrderStatus;
+import org.rag4j.nomnom.orders.model.OrderStatus;
 import org.rag4j.nomnom.products.MenuService;
-import org.rag4j.nomnom.products.Product;
 import org.slf4j.Logger;
 
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.rag4j.nomnom.agent.LlmModel.BALANCED;
 
@@ -41,7 +39,8 @@ public class HandleOrderAgent {
                                  In some cases, the result is an alternative product that is similar to the requested one.
                                  Replace the requested product with the best matching product from the menu.
                                  Return the list of order items with product and quantity.
-                                 In case there is not alternative, skip that product and a message to the note field in the order that you do not have the requested product and that there is no alternative.
+                                 In case there is not alternative, skip that product and a message to the note field in the 
+                                 order that you do not have the requested product and that there is no alternative.
                                 
                                  # Message to extract the order from
                                  %s
@@ -90,11 +89,11 @@ public class HandleOrderAgent {
         }
 
         orderService.createAndStoreOrder(
-                order.orderId,
+                order.orderId(),
                 order.location(),
                 order.deliveryDate(),
-                Arrays.stream(order.items.items).map(i -> new org.rag4j.nomnom.orders.OrderItem(i.product(), i.quantity())).toList(),
-                order.items.note,
+                Arrays.stream(order.items().items()).map(i -> new org.rag4j.nomnom.orders.model.OrderItem(i.product(), i.quantity())).toList(),
+                order.items().note(),
                 OrderStatus.CONFIRMED
         );
 
@@ -130,48 +129,4 @@ public class HandleOrderAgent {
                 , ProcessedOrder.class);
     }
 
-    public record UserMessage(String location, LocalDate deliveryDate, String message) {
-
-    }
-
-    public record OrderItem(Product product, int quantity) {
-
-    }
-
-    public record OrderItemsList(OrderItem[] items, String note) {
-
-        public String printOrderItems() {
-            StringBuilder sb = new StringBuilder();
-            for (OrderItem item : items()) {
-                sb.append("- ").append(item.quantity()).append(" x ").append(item.product.name()).append("\n");
-            }
-            return sb.toString();
-        }
-
-    }
-
-    public record Order(String orderId, String location, LocalDate deliveryDate, OrderItemsList items) {
-
-        public String printOrder() {
-            return "Order ID: " + orderId + "\n" +
-                    "Location: " + location + "\n" +
-                    "Delivery Date: " + deliveryDate + "\n" +
-                    "Items:\n" +
-                    printOrderItems();
-        }
-
-        public String printOrderItems() {
-            return items.printOrderItems();
-        }
-    }
-
-    public record ProcessedOrder(boolean success, String message) {
-
-    }
-
-    public record ConfirmedOrder(boolean confirmed) {
-    }
-
-    public record ConfirmedAndStoredOrder(boolean confirmed, boolean stored) {
-    }
 }

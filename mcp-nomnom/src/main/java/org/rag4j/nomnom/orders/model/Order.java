@@ -1,4 +1,4 @@
-package org.rag4j.nomnom.orders;
+package org.rag4j.nomnom.orders.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

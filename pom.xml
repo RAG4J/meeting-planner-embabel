@@ -54,12 +54,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.rag4j.meeting</groupId>
-                <artifactId>location-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- Extern dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -85,11 +79,36 @@
                 <scope>import</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>bootstrap</artifactId>
+                <version>5.3.8</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>jquery</artifactId>
+                <version>3.7.1</version>
+            </dependency>
+
+
             <!-- For vulnerabilities -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.18.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.5.19</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.5.19</version>
             </dependency>
         </dependencies>
 

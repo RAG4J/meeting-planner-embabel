@@ -1,6 +1,6 @@
-package org.rag4j.nomnom.controller;
+package org.rag4j.nomnom.orders;
 
-import org.rag4j.nomnom.orders.*;
+import org.rag4j.nomnom.orders.model.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -23,11 +23,6 @@
             <artifactId>common</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.rag4j.meeting</groupId>
-            <artifactId>location-model</artifactId>
-        </dependency>
-
         <!-- Spring depdencies -->
 
         <dependency>
@@ -40,6 +35,12 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+
         <!-- Thymeleaf for web templates -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,12 +51,11 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
-            <version>5.3.2</version>
         </dependency>
+
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.7.1</version>
         </dependency>
 
         <!-- Test dependencies -->

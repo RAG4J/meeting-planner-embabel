@@ -1,4 +1,4 @@
-package org.rag4j.nomnom.orders;
+package org.rag4j.nomnom.orders.model;
 
 /**
  * Represents the status of an order.

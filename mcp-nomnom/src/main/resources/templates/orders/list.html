@@ -164,11 +164,11 @@
                                             <td>
                                                 <span th:switch="${order.status.name()}" 
                                                       class="badge" 
-                                                      th:classappend="${order.status == T(org.rag4j.nomnom.orders.OrderStatus).DELIVERED ? 'bg-success' : 
-                                                                      order.status == T(org.rag4j.nomnom.orders.OrderStatus).PENDING ? 'bg-warning text-dark' :
-                                                                      order.status == T(org.rag4j.nomnom.orders.OrderStatus).CANCELLED ? 'bg-danger' :
-                                                                      order.status == T(org.rag4j.nomnom.orders.OrderStatus).CONFIRMED ? 'bg-info' :
-                                                                      order.status == T(org.rag4j.nomnom.orders.OrderStatus).READY ? 'bg-primary' : 
+                                                      th:classappend="${order.status == T(org.rag4j.nomnom.orders.model.OrderStatus).DELIVERED ? 'bg-success' :
+                                                                      order.status == T(org.rag4j.nomnom.orders.model.OrderStatus).PENDING ? 'bg-warning text-dark' :
+                                                                      order.status == T(org.rag4j.nomnom.orders.model.OrderStatus).CANCELLED ? 'bg-danger' :
+                                                                      order.status == T(org.rag4j.nomnom.orders.model.OrderStatus).CONFIRMED ? 'bg-info' :
+                                                                      order.status == T(org.rag4j.nomnom.orders.model.OrderStatus).READY ? 'bg-primary' :
                                                                       'bg-secondary'}">
                                                     <span th:text="${order.status.displayName}">Status</span>
                                                 </span>

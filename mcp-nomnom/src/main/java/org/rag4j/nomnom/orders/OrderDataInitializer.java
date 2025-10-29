@@ -1,7 +1,9 @@
 package org.rag4j.nomnom.orders;
 
+import org.rag4j.nomnom.orders.model.OrderItem;
+import org.rag4j.nomnom.orders.model.OrderStatus;
 import org.rag4j.nomnom.products.MenuService;
-import org.rag4j.nomnom.products.Product;
+import org.rag4j.nomnom.products.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;

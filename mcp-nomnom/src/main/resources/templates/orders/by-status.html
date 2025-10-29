@@ -28,9 +28,9 @@
             <div th:each="status : ${allStatuses}" class="row mb-4">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header" th:classappend="${status == T(org.rag4j.nomnom.orders.OrderStatus).DELIVERED ? 'bg-success text-white' : 
-                                                                   status == T(org.rag4j.nomnom.orders.OrderStatus).PENDING ? 'bg-warning' :
-                                                                   status == T(org.rag4j.nomnom.orders.OrderStatus).CANCELLED ? 'bg-danger text-white' : ''}">
+                        <div class="card-header" th:classappend="${status == T(org.rag4j.nomnom.orders.model.OrderStatus).DELIVERED ? 'bg-success text-white' :
+                                                                   status == T(org.rag4j.nomnom.orders.model.OrderStatus).PENDING ? 'bg-warning' :
+                                                                   status == T(org.rag4j.nomnom.orders.model.OrderStatus).CANCELLED ? 'bg-danger text-white' : ''}">
                             <h5 class="mb-0" th:text="${status.displayName + ' (' + ordersByStatus.get(status).size() + ')'}">
                                 Status (0)
                             </h5>

@@ -1,8 +1,8 @@
-package org.rag4j.nomnom.controller;
+package org.rag4j.nomnom;
 
-import org.rag4j.nomnom.products.Category;
+import org.rag4j.nomnom.products.model.Category;
 import org.rag4j.nomnom.products.MenuService;
-import org.rag4j.nomnom.products.Product;
+import org.rag4j.nomnom.products.model.Product;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,6 +1,7 @@
 package org.rag4j.nomnom.orders;
 
-import org.rag4j.nomnom.products.Product;
+import org.rag4j.nomnom.orders.model.*;
+import org.rag4j.nomnom.products.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

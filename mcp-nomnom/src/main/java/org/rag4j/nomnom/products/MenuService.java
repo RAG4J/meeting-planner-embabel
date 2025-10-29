@@ -1,6 +1,8 @@
 package org.rag4j.nomnom.products;
 
 import com.embabel.agent.api.common.Ai;
+import org.rag4j.nomnom.products.model.Category;
+import org.rag4j.nomnom.products.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;

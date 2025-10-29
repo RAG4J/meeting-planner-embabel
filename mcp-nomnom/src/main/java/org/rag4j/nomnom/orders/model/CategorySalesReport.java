@@ -1,4 +1,4 @@
-package org.rag4j.nomnom.orders;
+package org.rag4j.nomnom.orders.model;
 
 /**
  * Sales report for a specific category.
@@ -22,7 +22,7 @@ public record CategorySalesReport(
     /**
      * Get percentage of total revenue.
      */
-    public double getRevenuePercentage(double totalSystemRevenue) {
+   public double getRevenuePercentage(double totalSystemRevenue) {
         if (totalSystemRevenue == 0) return 0.0;
         return (totalRevenue / totalSystemRevenue) * 100;
     }

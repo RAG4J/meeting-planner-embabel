@@ -1,6 +1,6 @@
-package org.rag4j.nomnom.orders;
+package org.rag4j.nomnom.orders.model;
 
-import org.rag4j.nomnom.products.Product;
+import org.rag4j.nomnom.products.model.Product;
 
 /**
  * Represents an item in an order.
