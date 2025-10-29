@@ -2,15 +2,23 @@ package org.rag4j.nomnom.agent;
 
 import com.embabel.agent.api.annotation.*;
 import com.embabel.agent.api.common.Ai;
+import org.rag4j.nomnom.products.MenuService;
+import org.rag4j.nomnom.products.Product;
 import org.slf4j.Logger;
 
 import java.time.LocalDate;
 
-import static org.rag4j.nomnom.agent.LlmModel.BEST;
+import static org.rag4j.nomnom.agent.LlmModel.BALANCED;
 
 @Agent(description = "Handles an incoming food order and processes it accordingly.")
 public class HandleOrderAgent {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HandleOrderAgent.class);
+
+    private final MenuService menuService;
+
+    public HandleOrderAgent(MenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Action(description = "Receive an order request from a user.")
     Order receiveOrder(UserMessage userInput, Ai ai) {
@@ -18,30 +26,16 @@ public class HandleOrderAgent {
 
         var orderDetails = userInput.message();
 
-        var items = ai.withLlmByRole(BEST.getModelName())
+        var items = ai.withLlmByRole(BALANCED.getModelName())
+                .withToolObject(menuService)
                 .createObject(String.format("""
                                  You will be given a request for a food order.
                                  The text contains what the customer wants to order.
-                                 Extract the items from the request, match them against available options.
-                                 Only use the available options. Map found items to similar available options.
-                                 If an item is not available, do not include it in the order.
-                                 Return the order request with the items.
-                                
-                                 Available options are:
-                                 Diner:
-                                    - Pizza
-                                    - Burger
-                                    - Salad
-                                    - Sushi
-                                 Lunch:
-                                    - Sandwich
-                                    - Wrap
-                                    - Soup
-                                 Drinks:
-                                    - Soda
-                                    - Coffee
-                                    - Tea
-                                    - Juice
+                                 Extract the items from the request, use tools to find the best matching product.
+                                 In some cases, the result is an alternative product that is similar to the requested one.
+                                 Replace the requested product with the best matching product from the menu.
+                                 Return the list of order items with product and quantity.
+                                 In case there is not alternative, skip that product and a message to the note field in the order that you do not have the requested product and that there is no alternative.
                                 
                                  # Message to extract the order from
                                  %s
@@ -49,6 +43,8 @@ public class HandleOrderAgent {
                                 """,
                         orderDetails
                 ).trim(), OrderItemsList.class);
+
+        logger.info("Found items: {}", items.printOrderItems());
 
         return new Order(
                 java.util.UUID.randomUUID().toString(),
@@ -62,6 +58,7 @@ public class HandleOrderAgent {
     ConfirmedOrder confirmOrder(Order order, Ai ai) {
         logger.info("Confirming order for {} on {} with {} items.", order.location(), order.deliveryDate(),
                 order.items().items().length);
+        logger.info("Confirmed items: {}", order.printOrderItems());
 
         return WaitFor.formSubmission(
                 """
@@ -109,11 +106,19 @@ public class HandleOrderAgent {
 
     }
 
-    public record OrderItem(String itemName, int quantity) {
+    public record OrderItem(Product product, int quantity) {
 
     }
 
-    public record OrderItemsList(OrderItem[] items) {
+    public record OrderItemsList(OrderItem[] items, String note) {
+
+        public String printOrderItems() {
+            StringBuilder sb = new StringBuilder();
+            for (OrderItem item : items()) {
+                sb.append("- ").append(item.quantity()).append(" x ").append(item.product.name()).append("\n");
+            }
+            return sb.toString();
+        }
 
     }
 
@@ -128,11 +133,7 @@ public class HandleOrderAgent {
         }
 
         public String printOrderItems() {
-            StringBuilder sb = new StringBuilder();
-            for (OrderItem item : items.items()) {
-                sb.append("- ").append(item.quantity()).append(" x ").append(item.itemName()).append("\n");
-            }
-            return sb.toString();
+            return items.printOrderItems();
         }
     }
 

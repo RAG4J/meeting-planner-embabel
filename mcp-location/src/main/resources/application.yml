@@ -16,6 +16,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9000
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
   main:
     banner-mode: console
     web-application-type: servlet
