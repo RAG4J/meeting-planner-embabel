@@ -2,11 +2,15 @@ package org.rag4j.nomnom.agent;
 
 import com.embabel.agent.api.annotation.*;
 import com.embabel.agent.api.common.Ai;
+import org.rag4j.nomnom.orders.OrderService;
+import org.rag4j.nomnom.orders.OrderStatus;
 import org.rag4j.nomnom.products.MenuService;
 import org.rag4j.nomnom.products.Product;
 import org.slf4j.Logger;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.rag4j.nomnom.agent.LlmModel.BALANCED;
 
@@ -15,9 +19,11 @@ public class HandleOrderAgent {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HandleOrderAgent.class);
 
     private final MenuService menuService;
+    private final OrderService orderService;
 
-    public HandleOrderAgent(MenuService menuService) {
+    public HandleOrderAgent(MenuService menuService, OrderService orderService) {
         this.menuService = menuService;
+        this.orderService = orderService;
     }
 
     @Action(description = "Receive an order request from a user.")
@@ -74,11 +80,33 @@ public class HandleOrderAgent {
         );
     }
 
+    @Action(description = "Store the confirmed order in the system.")
+    ConfirmedAndStoredOrder storeOrder(ConfirmedOrder confirmedOrder, Order order) {
+        logger.info("Storing confirmed order. Confirmation status: {}", confirmedOrder.confirmed());
+
+        if (!confirmedOrder.confirmed()) {
+            logger.info("Order not confirmed, skipping storage.");
+            return new ConfirmedAndStoredOrder(false, false);
+        }
+
+        orderService.createAndStoreOrder(
+                order.orderId,
+                order.location(),
+                order.deliveryDate(),
+                Arrays.stream(order.items.items).map(i -> new org.rag4j.nomnom.orders.OrderItem(i.product(), i.quantity())).toList(),
+                order.items.note,
+                OrderStatus.CONFIRMED
+        );
+
+        logger.info("Order stored successfully with ID: {}", order.orderId());
+        return new ConfirmedAndStoredOrder(true, true);
+    }
+
     @AchievesGoal(
             description = "Process the food order by validating, preparing, and confirming it.",
             export = @Export(remote = true, name = "acceptOrder", startingInputTypes = {UserMessage.class}))
     @Action
-    ProcessedOrder processOrder(ConfirmedOrder confirmedOrder, Order order, Ai ai) {
+    ProcessedOrder processOrder(ConfirmedAndStoredOrder confirmedOrder, Order order, Ai ai) {
         logger.info("Processing order for {} on {}. Confirmation status: {}", order.location(),
                 order.deliveryDate(), confirmedOrder.confirmed());
 
@@ -142,5 +170,8 @@ public class HandleOrderAgent {
     }
 
     public record ConfirmedOrder(boolean confirmed) {
+    }
+
+    public record ConfirmedAndStoredOrder(boolean confirmed, boolean stored) {
     }
 }
