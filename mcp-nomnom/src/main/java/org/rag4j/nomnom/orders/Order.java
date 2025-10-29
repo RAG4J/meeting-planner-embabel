@@ -1,7 +1,5 @@
 package org.rag4j.nomnom.orders;
 
-import org.rag4j.nomnom.products.Product;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

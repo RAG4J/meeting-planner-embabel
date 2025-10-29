@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics - NomNom Food Service</title>
+    
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <header class="bg-success text-white py-4 mb-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-0"><i class="bi bi-graph-up"></i> Reports & Analytics</h1>
+                        <p class="mb-0 text-light">Comprehensive order statistics and insights</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="/" class="btn btn-light btn-sm">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                            <a href="/orders" class="btn btn-light btn-sm">
+                                <i class="bi bi-cart"></i> Orders
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Date Range Filter -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-calendar-range"></i> Select Date Range</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="get" action="/orders/reports" class="row g-3">
+                                <div class="col-md-5">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="date" name="startDate" id="startDate" class="form-control" 
+                                           th:value="${startDate}" required>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="date" name="endDate" id="endDate" class="form-control" 
+                                           th:value="${endDate}" required>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-search"></i> Update
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card border-primary h-100">
+                        <div class="card-body text-center">
+                            <h6 class="card-title text-primary">Total Orders</h6>
+                            <h2 class="mb-0" th:text="${summary.totalOrders}">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card border-success h-100">
+                        <div class="card-body text-center">
+                            <h6 class="card-title text-success">Total Revenue</h6>
+                            <h2 class="mb-0" th:text="'€' + ${#numbers.formatDecimal(summary.totalRevenue, 1, 2)}">€0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card border-info h-100">
+                        <div class="card-body text-center">
+                            <h6 class="card-title text-info">Avg Order Value</h6>
+                            <h2 class="mb-0" th:text="'€' + ${#numbers.formatDecimal(summary.averageOrderValue, 1, 2)}">€0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card border-warning h-100">
+                        <div class="card-body text-center">
+                            <h6 class="card-title text-warning">Total Items Sold</h6>
+                            <h2 class="mb-0" th:text="${summary.totalItemsSold}">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders by Status -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-list-check"></i> Orders by Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2 mb-2">
+                                    <div class="text-center p-2 border rounded">
+                                        <div class="badge bg-warning text-dark mb-1">Pending</div>
+                                        <h5 th:text="${summary.ordersByStatus.pending}">0</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-2">
+                                    <div class="text-center p-2 border rounded">
+                                        <div class="badge bg-info mb-1">Confirmed</div>
+                                        <h5 th:text="${summary.ordersByStatus.confirmed}">0</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-2">
+                                    <div class="text-center p-2 border rounded">
+                                        <div class="badge bg-secondary mb-1">Processing</div>
+                                        <h5 th:text="${summary.ordersByStatus.processing}">0</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-2">
+                                    <div class="text-center p-2 border rounded">
+                                        <div class="badge bg-primary mb-1">Ready</div>
+                                        <h5 th:text="${summary.ordersByStatus.ready}">0</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-2">
+                                    <div class="text-center p-2 border rounded">
+                                        <div class="badge bg-success mb-1">Delivered</div>
+                                        <h5 th:text="${summary.ordersByStatus.delivered}">0</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-2">
+                                    <div class="text-center p-2 border rounded">
+                                        <div class="badge bg-danger mb-1">Cancelled</div>
+                                        <h5 th:text="${summary.ordersByStatus.cancelled}">0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Products -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-trophy"></i> Top Selling Products</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Quantity Sold</th>
+                                            <th>Orders</th>
+                                            <th>Revenue</th>
+                                            <th>Avg/Order</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="report, iterStat : ${topProducts}">
+                                            <td th:text="${iterStat.count}">1</td>
+                                            <td>
+                                                <strong th:text="${report.product.name}">Product</strong>
+                                                <br>
+                                                <small class="text-muted" th:text="${report.product.description}">Description</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark" 
+                                                      th:text="${report.product.category.name}">
+                                                    Category
+                                                </span>
+                                            </td>
+                                            <td><strong th:text="${report.totalQuantitySold}">0</strong></td>
+                                            <td th:text="${report.numberOfOrders}">0</td>
+                                            <td>
+                                                <strong th:text="'€' + ${#numbers.formatDecimal(report.totalRevenue, 1, 2)}">
+                                                    €0.00
+                                                </strong>
+                                            </td>
+                                            <td th:text="${#numbers.formatDecimal(report.averageQuantityPerOrder, 1, 1)}">0.0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-end">
+                                <a href="/orders/popular-products" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-arrow-right"></i> View All Popular Products
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Sales by Category</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Quantity Sold</th>
+                                            <th>Orders</th>
+                                            <th>Revenue</th>
+                                            <th>Share</th>
+                                            <th>Unique Products</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="report : ${categoryReports}">
+                                            <td>
+                                                <strong th:text="${report.categoryName}">Category</strong>
+                                            </td>
+                                            <td th:text="${report.totalQuantitySold}">0</td>
+                                            <td th:text="${report.numberOfOrders}">0</td>
+                                            <td>
+                                                <strong th:text="'€' + ${#numbers.formatDecimal(report.totalRevenue, 1, 2)}">
+                                                    €0.00
+                                                </strong>
+                                            </td>
+                                            <td>
+                                                <span th:text="${#numbers.formatDecimal(report.getRevenuePercentage(totalRevenue), 1, 1)} + '%'">
+                                                    0%
+                                                </span>
+                                                <div class="progress" style="height: 5px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" 
+                                                         th:style="'width: ' + ${report.getRevenuePercentage(totalRevenue)} + '%'">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td th:text="${report.uniqueProducts}">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue by Location -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Revenue by Location</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Location</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="entry : ${revenueByLocation}">
+                                            <td>
+                                                <a th:href="@{'/orders/analytics/location/' + ${entry.key}}" 
+                                                   th:text="${entry.key}">
+                                                    Location
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <strong th:text="'€' + ${#numbers.formatDecimal(entry.value, 1, 2)}">
+                                                    €0.00
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Orders by Location</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Location</th>
+                                            <th>Order Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="entry : ${orderCountByLocation}">
+                                            <td>
+                                                <a th:href="@{'/orders/analytics/location/' + ${entry.key}}" 
+                                                   th:text="${entry.key}">
+                                                    Location
+                                                </a>
+                                            </td>
+                                            <td><strong th:text="${entry.value}">0</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-light py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-0">&copy; 2024 NomNom Food Service</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="/" class="btn btn-success btn-sm">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

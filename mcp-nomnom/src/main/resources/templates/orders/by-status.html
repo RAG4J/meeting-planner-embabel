@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders by Status - NomNom Food Service</title>
+    <link th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="bg-success text-white py-4 mb-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-0"><i class="bi bi-list-check"></i> Orders by Status</h1>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="/orders" class="btn btn-light btn-sm">
+                            <i class="bi bi-arrow-left"></i> Back to Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div th:each="status : ${allStatuses}" class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" th:classappend="${status == T(org.rag4j.nomnom.orders.OrderStatus).DELIVERED ? 'bg-success text-white' : 
+                                                                   status == T(org.rag4j.nomnom.orders.OrderStatus).PENDING ? 'bg-warning' :
+                                                                   status == T(org.rag4j.nomnom.orders.OrderStatus).CANCELLED ? 'bg-danger text-white' : ''}">
+                            <h5 class="mb-0" th:text="${status.displayName + ' (' + ordersByStatus.get(status).size() + ')'}">
+                                Status (0)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${ordersByStatus.get(status).isEmpty()}" class="text-muted">
+                                No orders with this status.
+                            </div>
+                            <div th:if="${!ordersByStatus.get(status).isEmpty()}" class="list-group">
+                                <a th:each="order : ${ordersByStatus.get(status)}" 
+                                   th:href="@{'/orders/' + ${order.orderId}}"
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong th:text="${order.location}">Location</strong> - 
+                                            <span th:text="${#temporals.format(order.deliveryDate, 'MMM dd')}">Date</span>
+                                        </div>
+                                        <div>
+                                            <span th:text="${order.totalItemCount + ' items'}">0 items</span> - 
+                                            <strong th:text="'€' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">€0.00</strong>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="bg-light py-4 mt-5">
+            <div class="container text-center">
+                <a href="/" class="btn btn-success btn-sm"><i class="bi bi-house"></i> Home</a>
+            </div>
+        </footer>
+    </div>
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
