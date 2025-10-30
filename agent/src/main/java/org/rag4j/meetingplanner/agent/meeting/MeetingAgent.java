@@ -3,6 +3,7 @@ package org.rag4j.meetingplanner.agent.meeting;
 import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
+import com.embabel.agent.api.common.Ai;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.api.common.StuckHandler;
 import com.embabel.agent.api.common.StuckHandlerResult;
@@ -18,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+
+import static org.rag4j.meetingplanner.agent.config.LlmModel.BALANCED;
 
 @Agent(
         name = "MeetingAgent",
@@ -40,10 +43,10 @@ public record MeetingAgent(PersonFinder personFinder) implements StuckHandler {
 
     @AchievesGoal(description = "Book a meeting if all participants are available")
     @Action
-    public MeetingResponse bookMeeting(MeetingRequest request, Participants participants, OperationContext context) throws Exception {
+    public MeetingResponse bookMeeting(MeetingRequest request, Participants participants, Ai ai) throws Exception {
         logger.info("Received meeting request: {}", request);
 
-        MeetingResponse response = context.ai().withLlm(OpenAiModels.GPT_41_MINI)
+        MeetingResponse response = ai.withLlmByRole(BALANCED.getModelName())
                 .withToolObject(participants)
                 .createObject(String.format("""
                                  You will be given a meeting request with participants emails.

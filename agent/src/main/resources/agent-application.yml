@@ -30,6 +30,8 @@ spring:
 embabel:
   models:
     default-llm: gpt-5-mini
+    options:
+      timeout: 60s
     llms:
       best: gpt-5
       balanced: gpt-5-mini
