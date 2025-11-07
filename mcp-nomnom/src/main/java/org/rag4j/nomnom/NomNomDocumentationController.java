@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class NomNomDocumentationController {
     }
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(@RequestParam(required = false) String search, Model model) {
         List<Category> categories = menuService.getCategories();
         List<Product> products = menuService.getProducts();
         
@@ -37,6 +38,13 @@ public class NomNomDocumentationController {
         model.addAttribute("version", "1.0.0");
         model.addAttribute("description", "AI-powered food ordering service for meetings. Order delicious food and drinks for your team!");
         model.addAttribute("totalProducts", products.size());
+        
+        // Handle search
+        if (search != null && !search.trim().isEmpty()) {
+            Product searchResult = menuService.findBestMatchingProduct(search);
+            model.addAttribute("searchQuery", search);
+            model.addAttribute("searchResults", searchResult != null ? List.of(searchResult) : List.of());
+        }
         
         return "index";
     }

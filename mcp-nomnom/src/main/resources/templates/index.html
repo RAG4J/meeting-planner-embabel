@@ -62,6 +62,77 @@
                 </div>
             </div>
 
+            <!-- Product Search -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">
+                                <i class="bi bi-search"></i> Search Products
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <form method="get" action="/">
+                                <div class="row">
+                                    <div class="col-md-8 col-lg-9">
+                                        <div class="mb-3">
+                                            <label for="search" class="form-label">Product Name</label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="search" 
+                                                   name="search" 
+                                                   th:value="${searchQuery}"
+                                                   placeholder="Search for a product (e.g., 'pizza', 'coffee', 'burger')..."
+                                                   required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-lg-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button type="submit" class="btn btn-success w-100">
+                                            <i class="bi bi-search"></i> Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <!-- Search Results -->
+                            <div th:if="${searchQuery != null}" class="mt-4">
+                                <h5>Search Results for "<span th:text="${searchQuery}"></span>"</h5>
+                                <div th:if="${searchResults != null and !searchResults.isEmpty()}">
+                                    <div class="alert alert-success">
+                                        <i class="bi bi-check-circle"></i> Found <strong th:text="${searchResults.size()}">0</strong> matching product(s)
+                                    </div>
+                                    <div class="row">
+                                        <div th:each="product : ${searchResults}" class="col-md-6 col-lg-4 mb-3">
+                                            <div class="card h-100 border-success">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <h5 class="card-title mb-0" th:text="${product.name}">Product Name</h5>
+                                                        <span class="badge bg-success" 
+                                                              th:text="'€' + ${product.price}">
+                                                            €0.00
+                                                        </span>
+                                                    </div>
+                                                    <p class="card-text" th:text="${product.description}">Product description</p>
+                                                    <div class="mt-2">
+                                                        <span class="badge bg-light text-dark" th:text="${product.category.name}">Category</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${searchResults == null or searchResults.isEmpty()}">
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> No matching products found. Try a different search term.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Available Tools -->
             <div class="row mb-5">
                 <div class="col-12">
@@ -278,7 +349,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <p class="mb-0">&copy; 2024 NomNom Food Service</p>
+                        <p class="mb-0">&copy; 2025 NomNom Food Service</p>
                     </div>
                     <div class="col-md-6 text-end">
                         <small class="text-muted">Powered by Embabel MCP Server</small>
