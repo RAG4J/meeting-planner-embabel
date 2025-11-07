@@ -37,7 +37,7 @@ public class MeetingAgentTest {
 
         var agent = new MeetingAgent(personFinder);
 
-        agent.bookMeeting(request, new Participants(List.of(person1, person2)), context);
+        agent.bookMeeting(request, new Participants(List.of(person1, person2)), context.ai());
 
         String prompt = promptRunner.getLlmInvocations().getFirst().getPrompt();
         assertTrue(prompt.contains("Project Kickoff"), "Expected prompt to contain 'Alice Smith'");

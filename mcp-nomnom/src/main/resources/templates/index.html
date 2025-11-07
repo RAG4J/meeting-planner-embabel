@@ -116,8 +116,8 @@
                                             <h5 class="card-title" th:text="${category.name}">Category Name</h5>
                                             <p class="card-text flex-grow-1" th:text="${category.description}">Category description</p>
                                             <div class="mt-auto">
-                                                <span class="badge bg-success" 
-                                                      th:text="${productsByCategory.get(category.name).size()} + ' items'">
+                                                <span class="badge bg-success"
+                                                      th:text="${productsByCategory.get(category.name) != null ? productsByCategory.get(category.name).size() : 0} + ' items'">
                                                     0 items
                                                 </span>
                                             </div>

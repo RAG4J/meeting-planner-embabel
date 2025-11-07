@@ -193,7 +193,7 @@ public class OrderDataInitializer implements ApplicationRunner {
     }
     
     private Product findProduct(String name) {
-        Product product = menuService.findProductByName(name);
+        Product product = menuService.findBestMatchingProduct(name);
         if (product == null) {
             throw new IllegalArgumentException("Product not found: " + name);
         }
