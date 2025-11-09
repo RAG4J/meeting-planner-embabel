@@ -24,21 +24,8 @@ public class NomNomDocumentationController {
 
     @GetMapping("/")
     public String index(@RequestParam(required = false) String search, Model model) {
-        List<Category> categories = menuService.getCategories();
-        List<Product> products = menuService.getProducts();
-        
-        // Group products by category for display
-        Map<String, List<Product>> productsByCategory = products.stream()
-                .collect(Collectors.groupingBy(p -> p.category().name()));
-        
-        model.addAttribute("categories", categories);
-        model.addAttribute("products", products);
-        model.addAttribute("productsByCategory", productsByCategory);
-        model.addAttribute("serverName", "NomNom Food Service");
-        model.addAttribute("version", "1.0.0");
-        model.addAttribute("description", "AI-powered food ordering service for meetings. Order delicious food and drinks for your team!");
-        model.addAttribute("totalProducts", products.size());
-        
+        addProductAndCategoryDataToTheResponse(model);
+
         // Handle search
         if (search != null && !search.trim().isEmpty()) {
             Product searchResult = menuService.findBestMatchingProduct(search);
@@ -53,35 +40,43 @@ public class NomNomDocumentationController {
     public String documentation(Model model) {
         return "redirect:/";
     }
-    
+
     @GetMapping("/menu")
     public String menu(Model model) {
-        List<Category> categories = menuService.getCategories();
-        List<Product> products = menuService.getProducts();
-        
-        // Group products by category
-        Map<String, List<Product>> productsByCategory = products.stream()
-                .collect(Collectors.groupingBy(p -> p.category().name()));
-        
-        model.addAttribute("categories", categories);
-        model.addAttribute("productsByCategory", productsByCategory);
-        model.addAttribute("totalProducts", products.size());
-        
+        addProductAndCategoryDataToTheResponse(model);
+
         return "menu";
     }
-    
+
     @GetMapping("/category/{categoryName}")
     public String categoryProducts(@PathVariable String categoryName, Model model) {
         Category category = menuService.findCategoryByName(categoryName);
         if (category == null) {
             return "redirect:/menu";
         }
-        
+
         List<Product> products = menuService.findProductsByCategory(categoryName);
-        
+
         model.addAttribute("category", category);
         model.addAttribute("products", products);
-        
+
         return "category";
+    }
+
+    private void addProductAndCategoryDataToTheResponse(Model model) {
+        List<Category> categories = menuService.getCategories();
+        List<Product> products = menuService.getProducts();
+
+        // Group products by category for display
+        Map<String, List<Product>> productsByCategory = products.stream()
+                .collect(Collectors.groupingBy(p -> p.category().name()));
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("products", products);
+        model.addAttribute("productsByCategory", productsByCategory);
+        model.addAttribute("serverName", "NomNom Food Service");
+        model.addAttribute("version", "1.0.0");
+        model.addAttribute("description", "AI-powered food ordering service for meetings. Order delicious food and drinks for your team!");
+        model.addAttribute("totalProducts", products.size());
     }
 }

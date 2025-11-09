@@ -65,3 +65,13 @@ logging:
     org.springframework.security.oauth2.client: INFO
     org.springframework.security.oauth2.core: INFO
     root: INFO
+
+management:
+  tracing:
+    sampling:
+      probability: 1 # Sample all traces for demonstration; adjust in production 1 = 100%
+  zipkin:
+    tracing:
+      export:
+        enabled: true
+      endpoint: http://localhost:9411/api/v2/spans

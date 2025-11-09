@@ -133,6 +133,67 @@
                 </div>
             </div>
 
+            <!-- Agent Order Form -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">
+                                <i class="bi bi-robot"></i> AI Agent Order
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-4">Use our AI agent to place an order. Just describe what you want in natural language!</p>
+                            <form id="agentOrderForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="location" class="form-label">Location</label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="location" 
+                                                   name="location" 
+                                                   placeholder="e.g., Amsterdam Office, Building A"
+                                                   required>
+                                            <div class="form-text">Where should the order be delivered?</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="deliveryDate" class="form-label">Delivery Date</label>
+                                            <input type="date" 
+                                                   class="form-control" 
+                                                   id="deliveryDate" 
+                                                   name="deliveryDate" 
+                                                   required>
+                                            <div class="form-text">When do you need the delivery?</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Order Description</label>
+                                    <textarea class="form-control" 
+                                              id="message" 
+                                              name="message" 
+                                              rows="4" 
+                                              placeholder="e.g., I need 5 pizzas and 10 drinks for a team meeting"
+                                              required></textarea>
+                                    <div class="form-text">Describe your order in natural language. The AI will process it for you.</div>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-send"></i> Submit Order
+                                </button>
+                            </form>
+                            
+                            <!-- Order Result -->
+                            <div id="orderResult" class="mt-4" style="display: none;">
+                                <div id="orderResultContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Available Tools -->
             <div class="row mb-5">
                 <div class="col-12">
@@ -361,5 +422,82 @@
 
     <!-- Bootstrap JS -->
     <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    
+    <!-- Agent Order Form Script -->
+    <script>
+        document.getElementById('agentOrderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+            
+            const resultDiv = document.getElementById('orderResult');
+            const resultContent = document.getElementById('orderResultContent');
+            
+            try {
+                const formData = {
+                    location: document.getElementById('location').value,
+                    deliveryDate: document.getElementById('deliveryDate').value,
+                    message: document.getElementById('message').value
+                };
+                
+                const response = await fetch('/api/products/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to process order');
+                }
+                
+                const result = await response.json();
+                
+                // Display result
+                resultDiv.style.display = 'block';
+                if (result.success) {
+                    resultContent.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5 class="alert-heading"><i class="bi bi-check-circle"></i> Order Processed Successfully!</h5>
+                            <p class="mb-0">${result.message}</p>
+                        </div>
+                    `;
+                } else {
+                    resultContent.innerHTML = `
+                        <div class="alert alert-warning">
+                            <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Order Processing Issue</h5>
+                            <p class="mb-0">${result.message}</p>
+                        </div>
+                    `;
+                }
+                
+                // Scroll to result
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.style.display = 'block';
+                resultContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5 class="alert-heading"><i class="bi bi-x-circle"></i> Error</h5>
+                        <p class="mb-0">Failed to process order. Please try again.</p>
+                    </div>
+                `;
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
+        });
+        
+        // Set minimum date to today
+        const deliveryDateInput = document.getElementById('deliveryDate');
+        const today = new Date().toISOString().split('T')[0];
+        deliveryDateInput.setAttribute('min', today);
+        deliveryDateInput.value = today;
+    </script>
 </body>
 </html>

@@ -3,10 +3,10 @@ server:
 
 embabel:
   models:
-    default-llm: gpt-5-mini
+    default-llm: gpt-4.1-mini
     llms:
-      best: gpt-5
-      balanced: gpt-5-mini
+      best: gpt-4.1
+      balanced: gpt-4.1-mini
 
 
 # Logging configuration
@@ -23,3 +23,28 @@ logging:
 nomnom:
   version: 1.0.0-SNAPSHOT
   description: "NomNom Food Ordering Service for Meetings"
+
+# Observability configuration
+management:
+  tracing:
+    sampling:
+      probability: 1 # Sample all traces for demonstration; adjust in production 1 = 100%
+  zipkin:
+    tracing:
+      export:
+        enabled: true
+      endpoint: http://localhost:9411/api/v2/spans
+
+gen_ai:
+  prompt: true
+  completion: true
+
+spring:
+  ai:
+    chat:
+      observations:
+        log-prompt: true
+        log-completion: true
+    vectorstore:
+      observations:
+        log-query-response: true

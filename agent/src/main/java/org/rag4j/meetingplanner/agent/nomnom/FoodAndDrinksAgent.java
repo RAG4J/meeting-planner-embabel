@@ -30,6 +30,8 @@ public class FoodAndDrinksAgent {
                                  You need to receive a location, date, and order details.
                                  Use the available tools to place the order.
                                  Return a description of the order that was created or a message if it failed.
+                                 Pay attention to the products in the order. Sometimes we order alternative products.
+                                 The confirmation message must contain the actual products being ordered.
 
                                  # order to place
                                  %s

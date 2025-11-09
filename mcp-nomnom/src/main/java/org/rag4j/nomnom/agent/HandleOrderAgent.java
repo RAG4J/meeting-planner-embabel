@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import java.util.Arrays;
 
 import static org.rag4j.nomnom.agent.LlmModel.BALANCED;
+import static org.rag4j.nomnom.agent.LlmModel.BEST;
 
 @Agent(description = "Handles an incoming food order and processes it accordingly.")
 public class HandleOrderAgent {
@@ -30,7 +31,7 @@ public class HandleOrderAgent {
 
         var orderDetails = userInput.message();
 
-        var items = ai.withLlmByRole(BALANCED.getModelName())
+        var items = ai.withLlmByRole(BEST.getModelName())
                 .withToolObject(menuService)
                 .createObject(String.format("""
                                  You will be given a request for a food order.
@@ -65,18 +66,22 @@ public class HandleOrderAgent {
                 order.items().items().length);
         logger.info("Confirmed items: {}", order.printOrderItems());
 
-        return WaitFor.formSubmission(
-                """
-                        Great, I have a proposed order. Please confirm if you would like to proceed with this order.
-                        
-                        Location: %s
-                        Delivery Date: %s
-                        
-                        The order contains the following items:
-                        %s
-                        """.formatted(order.location(), order.deliveryDate(), order.printOrderItems()),
-                ConfirmedOrder.class
-        );
+        return new ConfirmedOrder(true);
+
+//        I commented this code out to simplify the flow and avoid waiting for user input in this example.
+//        logger.info("Asking user to confirm the order.");
+//        return WaitFor.formSubmission(
+//                """
+//                        Great, I have a proposed order. Please confirm if you would like to proceed with this order.
+//
+//                        Location: %s
+//                        Delivery Date: %s
+//
+//                        The order contains the following items:
+//                        %s
+//                        """.formatted(order.location(), order.deliveryDate(), order.printOrderItems()),
+//                ConfirmedOrder.class
+//        );
     }
 
     @Action(description = "Store the confirmed order in the system.")
