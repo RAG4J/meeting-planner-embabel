@@ -1,6 +1,7 @@
-package org.rag4j.meetingplanner.webapp.nomnom;
+package org.rag4j.meetingplanner.webapp.chat;
 
 import io.modelcontextprotocol.client.McpSyncClient;
+import org.rag4j.meetingplanner.webapp.nomnom.NomNomAgent;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
@@ -16,44 +17,29 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
-public class NomNomConfig {
-
-    @Bean("nomNomChatClient")
-    public ChatClient chatClient(@Qualifier("nomNomChatModel") ChatModel chatModel) {
+public class ChatConfig {
+    @Bean("chatChatClient")
+    public ChatClient chatClient(@Qualifier("chatChatModel") ChatModel chatModel) {
         return ChatClient.builder(chatModel).build();
     }
 
     @Bean
-    public NomNomAgent nomnomAgent(@Qualifier("nomNomChatClient") ChatClient chatClient,
-                                   @Qualifier("nomNomChatMemory") ChatMemory chatMemory,
-                                   List<McpSyncClient> mcpSyncClients) {
-        return new NomNomAgent(chatClient, chatMemory,
-                new SyncMcpToolCallbackProvider(mcpSyncClients).getToolCallbacks());
+    public ChatAgent chatAgent(@Qualifier("chatChatClient") ChatClient chatClient,
+                                   @Qualifier("chatChatMemory") ChatMemory chatMemory) {
+        return new ChatAgent(chatClient, chatMemory);
     }
 
-    @Bean("nomNomChatMemory")
+    @Bean("chatChatMemory")
     public ChatMemory chatMemory() {
         return MessageWindowChatMemory.builder().build();
     }
 
 
-    @Bean("nomNomChatModel")
+    @Bean("chatChatModel")
     public ChatModel chatModel(OpenAiApi openAiApi) {
         return OpenAiChatModel.builder().openAiApi(openAiApi).defaultOptions(
                 OpenAiChatOptions.builder().model(OpenAiApi.ChatModel.GPT_5_MINI).build()
         ).build();
-    }
-
-    @Bean
-    public OpenAiApi openAIOkHttpClient() {
-        var openAIApiKey = System.getenv("OPENAI_API_KEY");
-        if (openAIApiKey == null || openAIApiKey.isEmpty()) {
-            throw new IllegalArgumentException("No proxy is configured and no OPENAI_API_KEY environment variable has" +
-                    " been set");
-        }
-        return OpenAiApi.builder()
-                .apiKey(openAIApiKey)
-                .build();
     }
 
 }

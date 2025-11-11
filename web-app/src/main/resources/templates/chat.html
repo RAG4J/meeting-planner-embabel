@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('AI Chat')}"><title>is replaced</title></head>
+<body>
+    <nav th:replace="~{layout/base :: nav}"></nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Chat Header -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4 class="mb-0">
+                                    <i class="fas fa-comments me-2"></i>AI Chat Assistant
+                                </h4>
+                                <small>Chatting as <span th:text="${username}">User</span></small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-light" id="clearChatBtn">
+                                <i class="fas fa-trash me-1"></i>Clear History
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Messages Area -->
+                    <div class="card-body p-0" style="height: 500px; overflow-y: auto; background-color: #f8f9fa;" id="chatMessages">
+                        <div class="p-3">
+                            <!-- Welcome Message -->
+                            <div class="alert alert-info mb-3" id="welcomeMessage">
+                                <i class="fas fa-robot me-2"></i>
+                                <strong>Welcome to the AI Chat!</strong> 
+                                I'm here to help you with meeting planning, scheduling, and more.
+                            </div>
+                            
+                            <!-- Chat History (if any) -->
+                            <div th:if="${chatHistory != null and not #lists.isEmpty(chatHistory)}">
+                                <div th:each="msg : ${chatHistory}" 
+                                     th:classappend="${msg.role() == 'user'} ? 'text-end' : 'text-start'"
+                                     class="mb-3">
+                                    <div th:classappend="${msg.role() == 'user'} ? 'bg-primary text-white' : 'bg-white border'"
+                                         class="d-inline-block p-3 rounded shadow-sm"
+                                         style="max-width: 75%;">
+                                        <div class="small text-muted mb-1" 
+                                             th:classappend="${msg.role() == 'user'} ? 'text-white-50' : ''">
+                                            <strong th:text="${msg.sender()}">Sender</strong>
+                                            <span th:text="${#temporals.format(msg.timestamp(), 'HH:mm')}">12:00</span>
+                                        </div>
+                                        <div th:text="${msg.content()}">Message content</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input Area -->
+                    <div class="card-footer bg-white">
+                        <form id="chatForm" class="d-flex gap-2">
+                            <input type="text" 
+                                   id="messageInput" 
+                                   class="form-control" 
+                                   placeholder="Type your message here..."
+                                   autocomplete="off"
+                                   required>
+                            <button type="submit" class="btn btn-primary" id="sendBtn">
+                                <i class="fas fa-paper-plane me-1"></i>Send
+                            </button>
+                        </form>
+                        <div id="typingIndicator" class="text-muted small mt-2" style="display: none;">
+                            <i class="fas fa-circle-notch fa-spin me-1"></i>AI is typing...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Info Panel -->
+                <div class="card mt-3 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title"><i class="fas fa-info-circle me-2"></i>About This Chat</h6>
+                        <p class="card-text small mb-0">
+                            This chat interface connects to a Spring AI agent with session-based memory. 
+                            Your conversation history is maintained throughout your session, allowing the AI 
+                            to understand context and provide more helpful responses.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+    <div th:replace="~{layout/base :: scripts}"></div>
+    
+    <!-- Chat-specific JavaScript -->
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            const chatMessages = $('#chatMessages');
+            const messageInput = $('#messageInput');
+            const chatForm = $('#chatForm');
+            const sendBtn = $('#sendBtn');
+            const typingIndicator = $('#typingIndicator');
+            const clearChatBtn = $('#clearChatBtn');
+            
+            // Get CSRF token from meta tags
+            const csrfToken = $('meta[name="_csrf"]').attr('content');
+            const csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+            
+            // Auto-scroll to bottom on page load
+            scrollToBottom();
+            
+            // Handle form submission
+            chatForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                const message = messageInput.val().trim();
+                if (!message) return;
+                
+                // Add user message to chat
+                addMessageToChat('user', message, /*[[${username}]]*/ 'You');
+                
+                // Clear input and disable form
+                messageInput.val('');
+                setFormEnabled(false);
+                typingIndicator.show();
+                
+                // Send message to backend
+                $.ajax({
+                    url: '/chat/message',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    },
+                    data: JSON.stringify({ message: message }),
+                    success: function(response) {
+                        if (response.success && response.message) {
+                            addMessageToChat('assistant', response.message, 'Meeting Planner AI');
+                        } else {
+                            addMessageToChat('assistant', 'Sorry, I encountered an error: ' + (response.error || 'Unknown error'), 'System');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Chat error:', error);
+                        addMessageToChat('assistant', 'Sorry, I couldn\'t process your message. Please try again.', 'System');
+                    },
+                    complete: function() {
+                        setFormEnabled(true);
+                        typingIndicator.hide();
+                        messageInput.focus();
+                    }
+                });
+            });
+            
+            // Clear chat history
+            clearChatBtn.on('click', function() {
+                if (!confirm('Are you sure you want to clear the chat history?')) {
+                    return;
+                }
+                
+                $.ajax({
+                    url: '/chat/clear',
+                    method: 'POST',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Remove all messages except welcome
+                            chatMessages.find('.p-3').html($('#welcomeMessage').prop('outerHTML'));
+                            messageInput.focus();
+                        }
+                    },
+                    error: function() {
+                        alert('Failed to clear chat history');
+                    }
+                });
+            });
+            
+            // Helper: Add message to chat UI
+            function addMessageToChat(role, content, sender) {
+                const isUser = role === 'user';
+                const timestamp = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                
+                const messageHtml = `
+                    <div class="mb-3 ${isUser ? 'text-end' : 'text-start'}">
+                        <div class="d-inline-block p-3 rounded shadow-sm ${isUser ? 'bg-primary text-white' : 'bg-white border'}" 
+                             style="max-width: 75%;">
+                            <div class="small mb-1 ${isUser ? 'text-white-50' : 'text-muted'}">
+                                <strong>${sender}</strong>
+                                <span>${timestamp}</span>
+                            </div>
+                            <div>${escapeHtml(content)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.find('.p-3').append(messageHtml);
+                scrollToBottom();
+            }
+            
+            // Helper: Enable/disable form
+            function setFormEnabled(enabled) {
+                messageInput.prop('disabled', !enabled);
+                sendBtn.prop('disabled', !enabled);
+            }
+            
+            // Helper: Scroll to bottom
+            function scrollToBottom() {
+                chatMessages.animate({ scrollTop: chatMessages[0].scrollHeight }, 300);
+            }
+            
+            // Helper: Escape HTML
+            function escapeHtml(text) {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+            }
+            
+            // Focus input on page load
+            messageInput.focus();
+        });
+    </script>
+    
+    <style>
+        /* Custom scrollbar for chat messages */
+        #chatMessages::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</body>
+</html>
