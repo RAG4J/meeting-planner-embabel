@@ -1,6 +1,5 @@
 package org.rag4j.meetingplanner.webapp.controller;
 
-import com.embabel.agent.core.AgentPlatform;
 import org.rag4j.meetingplanner.agent.nomnom.model.NomNomOrderConfirmation;
 import org.rag4j.meetingplanner.agent.nomnom.model.NomNomOrderRequest;
 import org.rag4j.meetingplanner.webapp.nomnom.NomNomAgent;
@@ -18,11 +17,9 @@ import java.time.LocalDate;
 public class NomNomController {
     private static final Logger logger = LoggerFactory.getLogger(NomNomController.class);
 
-    private final AgentPlatform agentPlatform;
     private final NomNomAgent nomNomAgent;
 
-    public NomNomController(AgentPlatform agentPlatform, NomNomAgent nomNomAgent) {
-        this.agentPlatform = agentPlatform;
+    public NomNomController(NomNomAgent nomNomAgent) {
         this.nomNomAgent = nomNomAgent;
     }
 
@@ -40,10 +37,7 @@ public class NomNomController {
 
         try {
             logger.info("Submitting NomNom order request for location {}", orderRequest.location());
-//            var agentInvocation = AgentInvocation.create(agentPlatform, NomNomOrderResult.class);
-//            NomNomOrderResult orderResult = agentInvocation.invoke(orderRequest);
             NomNomAgent.OrderConfirmation response = nomNomAgent.placeOrder(orderRequest.location(), orderRequest.deliveryDate(), orderRequest.message());
-//            var orderResult = new NomNomOrderResult(true, response);
 
             model.addAttribute("success", response.responseMessage());
             if (response.askForConfirmation()) {

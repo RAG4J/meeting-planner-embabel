@@ -4,10 +4,8 @@ import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.common.Ai;
-import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.api.common.StuckHandler;
 import com.embabel.agent.api.common.StuckHandlerResult;
-import com.embabel.agent.config.models.OpenAiModels;
 import com.embabel.agent.core.AgentProcess;
 import org.jetbrains.annotations.NotNull;
 import org.rag4j.meetingplanner.agent.meeting.model.MeetingRequest;
@@ -20,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static org.rag4j.meetingplanner.agent.config.LlmModel.BALANCED;
+import static org.rag4j.meetingplanner.agent.config.LlmModel.*;
 
 @Agent(
         name = "MeetingAgent",
@@ -46,7 +44,7 @@ public record MeetingAgent(PersonFinder personFinder) implements StuckHandler {
     public MeetingResponse bookMeeting(MeetingRequest request, Participants participants, Ai ai) throws Exception {
         logger.info("Received meeting request: {}", request);
 
-        MeetingResponse response = ai.withLlmByRole(BALANCED.getModelName())
+        MeetingResponse response = ai.withLlmByRole(FAST.getModelName())
                 .withToolObject(participants)
                 .createObject(String.format("""
                                  You will be given a meeting request with participants emails.

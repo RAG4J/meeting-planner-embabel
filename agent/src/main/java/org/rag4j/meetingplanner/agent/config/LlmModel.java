@@ -2,7 +2,8 @@ package org.rag4j.meetingplanner.agent.config;
 
 public enum LlmModel {
     BEST("best"),
-    BALANCED("balanced");
+    BALANCED("balanced"),
+    FAST("fast");
 
     private final String modelName;
 

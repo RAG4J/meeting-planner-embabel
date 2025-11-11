@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.rag4j.meetingplanner.agent.config.LlmModel.BALANCED;
 
+/**
+ * This is the Embebal variant of the NomNom Food and Drinks Agent. The problems was that it did not play well with the
+ * WaitFor. Therefore we created a simpler variant that just places orders.
+ */
 @Agent(
         name = "FoodAndDrinksAgent",
         description = "An agent that helps to place orders for food and drinks.",

@@ -35,3 +35,4 @@ embabel:
     llms:
       best: gpt-5
       balanced: gpt-5-mini
+      fast: gpt-4.1-mini

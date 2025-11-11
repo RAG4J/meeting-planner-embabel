@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.rag4j.meetingplanner.agent.config.LlmModel.BALANCED;
+import static org.rag4j.meetingplanner.agent.config.LlmModel.FAST;
 
 @Agent(
         name = "LocationAgent",
@@ -26,7 +27,7 @@ public class LocationAgent {
     public BookingResult bookRoom(SuggestedRoom room, Ai ai) throws Exception {
         logger.info("Received book room request: {}", room);
 
-        BookingResult response = ai.withLlmByRole(BALANCED.getModelName())
+        BookingResult response = ai.withLlmByRole(FAST.getModelName())
                 .createObject(String.format("""
                                  You will be given an suggested room.
                                  If the id of the room is 'non-available', write the response message that it did not work and stop processing.
@@ -48,7 +49,7 @@ public class LocationAgent {
     public SuggestedRoom findRoomAtLocation(Location location, RoomRequest roomRequest, Ai ai) {
         logger.info("Received find room request: {}", roomRequest);
 
-        SuggestedRoom response = ai.withLlmByRole(BALANCED.getModelName())
+        SuggestedRoom response = ai.withLlmByRole(FAST.getModelName())
                 .createObject(String.format("""
                                  You will be given an Id for a location.
                                  You have access to all rooms for that location through tools.
@@ -73,7 +74,7 @@ public class LocationAgent {
     public Location findLocation(RoomRequest request, Ai ai) {
         logger.info("Received meeting request: {}", request);
 
-        Location response = ai.withLlmByRole(BALANCED.getModelName())
+        Location response = ai.withLlmByRole(FAST.getModelName())
                 .createObject(String.format("""
                                  You will be given a description for a location.
                                  You have access to all available locations through tools.
