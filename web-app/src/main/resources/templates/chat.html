@@ -26,7 +26,7 @@
                     
                     <!-- Chat Messages Area -->
                     <div class="card-body p-0" style="height: 500px; overflow-y: auto; background-color: #f8f9fa;" id="chatMessages">
-                        <div class="p-3">
+                        <div class="p-3" id="messagesContainer">
                             <!-- Welcome Message -->
                             <div class="alert alert-info mb-3" id="welcomeMessage">
                                 <i class="fas fa-robot me-2"></i>
@@ -35,20 +35,18 @@
                             </div>
                             
                             <!-- Chat History (if any) -->
-                            <div th:if="${chatHistory != null and not #lists.isEmpty(chatHistory)}">
-                                <div th:each="msg : ${chatHistory}" 
-                                     th:classappend="${msg.role() == 'user'} ? 'text-end' : 'text-start'"
-                                     class="mb-3">
-                                    <div th:classappend="${msg.role() == 'user'} ? 'bg-primary text-white' : 'bg-white border'"
-                                         class="d-inline-block p-3 rounded shadow-sm"
-                                         style="max-width: 75%;">
-                                        <div class="small text-muted mb-1" 
-                                             th:classappend="${msg.role() == 'user'} ? 'text-white-50' : ''">
-                                            <strong th:text="${msg.sender()}">Sender</strong>
-                                            <span th:text="${#temporals.format(msg.timestamp(), 'HH:mm')}">12:00</span>
-                                        </div>
-                                        <div th:text="${msg.content()}">Message content</div>
+                            <div th:each="msg : ${chatHistory}" 
+                                 th:classappend="${msg.role() == 'user'} ? 'text-end' : 'text-start'"
+                                 class="mb-3">
+                                <div th:classappend="${msg.role() == 'user'} ? 'bg-primary text-white' : 'bg-white border'"
+                                     class="d-inline-block p-3 rounded shadow-sm"
+                                     style="max-width: 75%;">
+                                    <div class="small mb-1" 
+                                         th:classappend="${msg.role() == 'user'} ? 'text-white-50' : 'text-muted'">
+                                        <strong th:text="${msg.sender()}">Sender</strong>
+                                        <span th:text="${#temporals.format(msg.timestamp(), 'HH:mm')}">12:00</span>
                                     </div>
+                                    <div th:text="${msg.content()}">Message content</div>
                                 </div>
                             </div>
                         </div>
@@ -95,6 +93,7 @@
     <script th:inline="javascript">
         $(document).ready(function() {
             const chatMessages = $('#chatMessages');
+            const messagesContainer = $('#messagesContainer');
             const messageInput = $('#messageInput');
             const chatForm = $('#chatForm');
             const sendBtn = $('#sendBtn');
@@ -166,7 +165,7 @@
                     success: function(response) {
                         if (response.success) {
                             // Remove all messages except welcome
-                            chatMessages.find('.p-3').html($('#welcomeMessage').prop('outerHTML'));
+                            messagesContainer.html($('#welcomeMessage').prop('outerHTML'));
                             messageInput.focus();
                         }
                     },
@@ -194,7 +193,7 @@
                     </div>
                 `;
                 
-                chatMessages.find('.p-3').append(messageHtml);
+                messagesContainer.append(messageHtml);
                 scrollToBottom();
             }
             

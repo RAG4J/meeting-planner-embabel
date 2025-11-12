@@ -1,5 +1,6 @@
 package org.rag4j.meetingplanner.webapp.chat;
 
+import com.embabel.agent.api.common.OperationContext;
 import io.modelcontextprotocol.client.McpSyncClient;
 import org.rag4j.meetingplanner.webapp.nomnom.NomNomAgent;
 import org.springframework.ai.chat.client.ChatClient;
@@ -25,8 +26,9 @@ public class ChatConfig {
 
     @Bean
     public ChatAgent chatAgent(@Qualifier("chatChatClient") ChatClient chatClient,
-                                   @Qualifier("chatChatMemory") ChatMemory chatMemory) {
-        return new ChatAgent(chatClient, chatMemory);
+                               @Qualifier("chatChatMemory") ChatMemory chatMemory,
+                               ChatTools tools) {
+        return new ChatAgent(chatClient, chatMemory, tools);
     }
 
     @Bean("chatChatMemory")
