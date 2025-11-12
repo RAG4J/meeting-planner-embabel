@@ -40,7 +40,7 @@ public class ChatAgent {
                 LocationAgent: Helps to find and book meeting locations.
                 Input class: LocationInput {String locationName, int capacity, String dateTime}
                 
-                FoodAndDrinksAgent: Helps to order food for meetings.
+                FoodAndDrinksAgent: Helps to order food and drinks for meetings. The message contains a description of the order.
                 Input class: NomNomOrderRequest {String location, LocalDate deliveryDate, String message}
                 
                 MeetingAgent: Helps to schedule meetings between participants.

@@ -49,6 +49,7 @@ public class ChatTools {
         return meetingResponse;
     }
 
+    @Tool(description = "Book food and drinks order based on the order request")
     public NomNomOrderResult bookNomNomOrder(NomNomOrderRequest request) {
         logger.info("About to place food and drinks order for location '{}' on date {} with message: {}",
                 request.location(), request.deliveryDate(), request.message());
