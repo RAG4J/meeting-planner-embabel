@@ -41,28 +41,28 @@ public record MeetingAgent(PersonFinder personFinder) implements StuckHandler {
 
     @AchievesGoal(description = "Book a meeting if all participants are available")
     @Action
-    public MeetingResponse bookMeeting(MeetingRequest request, Participants participants, Ai ai) throws Exception {
+    public MeetingResponse bookMeeting(MeetingRequest request, Participants participants, Ai ai) {
         logger.info("Received meeting request: {}", request);
 
         MeetingResponse response = ai.withLlmByRole(FAST.getModelName())
                 .withToolObject(participants)
                 .createObject(String.format("""
-                                 You will be given a meeting request with participants emails.
-                                 You get availability information for each participant.
-                                 Each participant has an agenda with their availability.
-                                 If not all participants are available, you can ask all participants when they are available.
-                                 Choose a time when all participants are available and book the meeting.
-                                 If you cannot find a time when all participants are available, respond with 'No common availability found'.
-                                
-                                 # Meeting request
-                                 %s
+                     You will be given a meeting request with participants emails.
+                     You get availability information for each participant.
+                     Each participant has an agenda with their availability.
+                     If not all participants are available, you can ask all participants when they are available.
+                     Choose a time when all participants are available and book the meeting.
+                     If you cannot find a time when all participants are available,
+                     respond with 'No common availability found'.
+                    
+                     # Meeting request
+                     %s
 
-                                """,
+                    """,
                         request
                 ).trim(), MeetingResponse.class);
         logger.info("Response generated: {}", response);
         return response;
-
     }
 
     @NotNull
